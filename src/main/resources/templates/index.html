@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Thymeleaf syntax to dynamically print the message from the Java controller -->
+    <h1 th:text="${message}">Default Fallback Message</h1>
+    <p>This thing shall be diaplayed on web page</p>
+</body>
+</html>
