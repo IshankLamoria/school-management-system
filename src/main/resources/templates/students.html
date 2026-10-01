@@ -2,37 +2,53 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Student Directory</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #4a90e2; color: white; }
-    </style>
+    <title th:text="${directoryTitle}">Student Directory</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <h1>School Student Directory</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/students">Student Directory</a>
+        <!-- When logged in -->
+        <span th:if="${isLoggedIn}">
+            <a th:if="${loggedInRole == 'student'}" href="/student/profile">My Profile</a>
+            <a th:if="${loggedInRole == 'teacher'}" href="/teacher/profile">My Profile</a>
+            <a th:if="${loggedInRole == 'staff'}" href="/staff/profile">My Profile</a>
+            <a th:if="${loggedInRole == 'admin'}" href="/admin/students">Admin Portal</a>
+            <a href="/logout">Logout (<span th:text="${loggedInUser}">User</span>)</a>
+        </span>
+        <!-- When not logged in -->
+        <span th:unless="${isLoggedIn}">
+            <a href="/login">Login</a>
+        </span>
+    </nav>
+
+    <h1 th:text="${directoryTitle}">Student Directory</h1>
     
     <table>
         <thead>
             <tr>
-                <th>Admission No</th>
                 <th>Roll No</th>
-                <th>First Name</th>
-                <th>Standard</th>
+                <th>Admission No</th>
+                <th>Name</th>
+                <th>Class</th>
+                <th>Section</th>
                 <th>House</th>
-                <th>Remaining Fees</th>
+                <th th:if="${loggedInRole != 'student'}">Remaining Fees</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Loop through the student list from the backend -->
             <tr th:each="s : ${studentList}">
-                <td th:text="${s.admissionNo}">101</td>
                 <td th:text="${s.rollNo}">1</td>
-                <td th:text="${s.firstName}">John</td>
+                <td th:text="${s.admissionNo}">A001</td>
+                <td th:text="${s.firstName} + (${s.lastName != null} ? ' ' + ${s.lastName} : '')">John Doe</td>
                 <td th:text="${s.standard}">10</td>
+                <td th:text="${s.division}">A</td>
                 <td th:text="${s.house}">Red</td>
-                <td th:text="${s.remainingFees}">0.0</td>
+                <td th:if="${loggedInRole != 'student'}" th:text="'₹' + ${s.remainingFees}">0.0</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(studentList)}">
+                <td colspan="6" style="text-align: center; color: #666;">No students found in this class and section.</td>
             </tr>
         </tbody>
     </table>

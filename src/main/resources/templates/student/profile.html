@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Profile</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/students">Student Directory</a>
+        <a href="/student/profile">My Profile</a>
+        <a href="/logout">Logout (<span th:text="${student.admissionNo}">A001</span>)</a>
+    </nav>
+
+    <h1>Student Profile</h1>
+
+    <!-- Personal Information -->
+    <h2>Personal Information</h2>
+    <table style="width: 500px;">
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Admission No</td><td th:text="${student.admissionNo}">A001</td></tr>
+        <tr><td>Full Name</td><td th:text="${student.fullName}">Rohan Mehta</td></tr>
+        <tr><td>Date of Birth</td><td th:text="${student.dateOfBirth}">2010-05-14</td></tr>
+        <tr><td>Age</td><td th:text="${student.age}">15</td></tr>
+        <tr><td>Gender</td><td th:text="${student.gender}">Male</td></tr>
+        <tr><td>Blood Group</td><td th:text="${student.bloodGroup}">O+</td></tr>
+    </table>
+
+    <!-- Academic Information -->
+    <h2>Academic Information</h2>
+    <table style="width: 500px;">
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Standard</td><td th:text="${student.standard}">10</td></tr>
+        <tr><td>Division</td><td th:text="${student.division}">A</td></tr>
+        <tr><td>Roll No</td><td th:text="${student.rollNo}">1</td></tr>
+        <tr><td>Room No</td><td th:text="${student.roomNo}">Room-101</td></tr>
+        <tr><td>House</td><td th:text="${student.house} + ' (' + ${student.houseName} + ')'">Red (Phoenix House)</td></tr>
+        <tr><td>Class Teacher</td><td th:text="${student.classTeacherName != null ? student.classTeacherName : 'Not Assigned'}">Anita Verma</td></tr>
+        <tr><td>Date of Admission</td><td th:text="${student.dateOfAdmission}">2021-04-01</td></tr>
+    </table>
+
+    <!-- Guardian Information -->
+    <h2>Guardian Information</h2>
+    <table>
+        <thead>
+            <tr><th>Relationship</th><th>Name</th><th>Occupation</th><th>Phone</th></tr>
+        </thead>
+        <tbody>
+            <tr th:each="g : ${guardians}">
+                <td th:text="${g.relationship}">Father</td>
+                <td th:text="${g.fullName}">Suresh Mehta</td>
+                <td th:text="${g.occupation}">Engineer</td>
+                <td th:text="${g.phoneNo}">9998887771</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(guardians)}">
+                <td colspan="4">No guardian information available</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Transport Information -->
+    <h2>Transport Information</h2>
+    <div th:if="${student.vehicleNo != null}">
+        <p>Vehicle No: <strong th:text="${student.vehicleNo}">V01</strong></p>
+        <p>Route: <strong th:text="${student.routeName}">Route A</strong></p>
+    </div>
+    <p th:if="${student.vehicleNo == null}">Day Scholar — No transport assigned</p>
+
+    <!-- Fee Status -->
+    <h2>Fee Status</h2>
+    <p th:if="${student.remainingFees == 0}" style="color: green;"><strong>₹0 — All Clear ✓</strong></p>
+    <p th:if="${student.remainingFees > 0}" style="color: red;"><strong th:text="'₹' + ${student.remainingFees} + ' Pending'">₹5000 Pending</strong></p>
+
+</body>
+</html>

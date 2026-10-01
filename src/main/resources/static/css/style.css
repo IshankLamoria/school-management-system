@@ -1,0 +1,16 @@
+/* Basic reset and readable defaults */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px 40px;
+    background: #fff;
+    color: #333;
+}
+a { color: #2563eb; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+th { background: #f0f0f0; }
+input, select { padding: 6px; margin: 4px 0; font-size: 14px; }
+button, .btn { padding: 8px 16px; cursor: pointer; font-size: 14px; }
+.error { color: red; margin-bottom: 10px; }
+nav { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ccc; }
+nav a { margin-right: 15px; }

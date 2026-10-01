@@ -2,22 +2,57 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Hello World App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 100px;
-            background-color: #f4f4f9;
-        }
-        h1 {
-            color: #333;
-        }
-    </style>
+    <title>School Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <!-- Thymeleaf syntax to dynamically print the message from the Java controller -->
-    <h1 th:text="${message}">Default Fallback Message</h1>
-    <p>This thing shall be diaplayed on web page</p>
+    <nav>
+        <a href="/">Home</a>
+        <!-- When logged in -->
+        <span th:if="${isLoggedIn}">
+            <a href="/students">Student Directory</a>
+            <a th:if="${loggedInRole == 'student'}" href="/student/profile">My Profile</a>
+            <a th:if="${loggedInRole == 'teacher'}" href="/teacher/profile">My Profile</a>
+            <a th:if="${loggedInRole == 'staff'}" href="/staff/profile">My Profile</a>
+            <a th:if="${loggedInRole == 'admin'}" href="/admin/students">Admin Portal</a>
+            <a href="/logout">Logout (<span th:text="${loggedInUser}">User</span>)</a>
+        </span>
+        <!-- When not logged in -->
+        <span th:unless="${isLoggedIn}">
+            <a href="/login">Login</a>
+        </span>
+    </nav>
+
+    <h1>School Management System</h1>
+    <p>Welcome to the school management portal.</p>
+
+    <!-- User status banner when logged in -->
+    <div th:if="${isLoggedIn}" style="background: #eef2ff; border: 1px solid #c7d2fe; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+        Logged in as: <strong th:text="${loggedInUser}"></strong> (<span th:text="${loggedInRole}"></span>) &nbsp;|&nbsp;
+        <a th:if="${loggedInRole == 'student'}" href="/student/profile">Go to My Profile →</a>
+        <a th:if="${loggedInRole == 'teacher'}" href="/teacher/profile">Go to My Profile →</a>
+        <a th:if="${loggedInRole == 'staff'}" href="/staff/profile">Go to My Profile →</a>
+        <a th:if="${loggedInRole == 'admin'}" href="/admin/students">Go to Admin Portal →</a>
+    </div>
+
+    <h2>Quick Stats</h2>
+    <table style="width: 400px;">
+        <tr><th>Category</th><th>Count</th></tr>
+        <tr><td>Students</td><td th:text="${studentCount}">0</td></tr>
+        <tr><td>Teachers</td><td th:text="${teacherCount}">0</td></tr>
+        <tr><td>Staff</td><td th:text="${staffCount}">0</td></tr>
+        <tr><td>Houses</td><td th:text="${houseCount}">0</td></tr>
+    </table>
+
+    <br>
+    <div th:if="${!isLoggedIn}">
+        <a href="/login">→ Go to Login</a>
+    </div>
+    <div th:if="${isLoggedIn}">
+        <a th:if="${loggedInRole == 'student'}" href="/student/profile">→ View My Student Profile</a>
+        <a th:if="${loggedInRole == 'teacher'}" href="/teacher/profile">→ View My Teacher Profile</a>
+        <a th:if="${loggedInRole == 'staff'}" href="/staff/profile">→ View My Staff Profile</a>
+        <a th:if="${loggedInRole == 'admin'}" href="/admin/students">→ View Admin Dashboard</a>
+    </div>
 </body>
 </html>

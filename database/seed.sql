@@ -38,8 +38,8 @@ INSERT INTO Section VALUES
 (10,'A','Room-101','T001'),
 (10,'B','Room-102','T002');
 
-UPDATE Teacher SET Mentor_Standard=10, Mentor_Division='A' WHERE Employee_ID='T001';
-UPDATE Teacher SET Mentor_Standard=10, Mentor_Division='B' WHERE Employee_ID='T002';
+UPDATE Teacher SET MentorOf='Red' WHERE Employee_ID='T001';
+UPDATE Teacher SET MentorOf='Blue' WHERE Employee_ID='T002';
 
 INSERT INTO Student (Admission_No, Roll_No, First_Name, Middle_Name, Last_Name,
     Blood_Group, Standard, Division, House, Vehicle_No, Date_Of_Admission,
@@ -53,8 +53,12 @@ INSERT INTO Student_Guardian VALUES
 ('A002','Mother','Lakshmi',NULL,'Nair','Doctor','9998887772');
 
 INSERT INTO Subject VALUES
-('MATH10','Mathematics','NCERT Class 10 Maths',6,10),
-('ENG10','English','NCERT Class 10 English',5,10);
+('MATH10','Mathematics',6,10),
+('ENG10','English',5,10);
+
+INSERT INTO Reference_Books VALUES
+('NCERT Class 10 Maths','MATH10'),
+('NCERT Class 10 English','ENG10');
 
 INSERT INTO Teacher_Subject VALUES
 ('T001','MATH10'),

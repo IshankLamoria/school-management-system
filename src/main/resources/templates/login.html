@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login — School Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+    </nav>
+
+    <h1>Login</h1>
+
+    <div th:if="${error}" class="error" th:text="${error}">Error</div>
+
+    <form method="post" action="/login">
+        <h3>Select Role:</h3>
+        <label><input type="radio" name="role" value="student"> Student</label><br>
+        <label><input type="radio" name="role" value="teacher"> Teacher</label><br>
+        <label><input type="radio" name="role" value="staff"> Staff</label><br>
+        <label><input type="radio" name="role" value="admin"> Admin</label><br>
+        <br>
+
+        <label>Your ID:<br>
+            <input type="text" name="userId" placeholder="e.g. A001, T001, S001, admin" required style="width:250px;">
+        </label><br><br>
+
+        <label>Password (admin only):<br>
+            <input type="password" name="password" placeholder="Leave blank for non-admin" style="width:250px;">
+        </label><br><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <br>
+    <p><small>Test credentials — Student: A001 | Teacher: T001 | Staff: S001 | Admin: admin / admin123</small></p>
+</body>
+</html>
