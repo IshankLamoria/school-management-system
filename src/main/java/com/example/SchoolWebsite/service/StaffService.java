@@ -33,4 +33,20 @@ public class StaffService {
     public List<Student> getBusStudents(String vehicleId) {
         return staffRepository.getBusStudents(vehicleId);
     }
+
+    public List<Staff> getAllStaff() {
+        return staffRepository.findAll();
+    }
+
+    public void saveStaff(Staff s) {
+        staffRepository.save(s);
+    }
+
+    public void updateStaff(Staff s) {
+        staffRepository.update(s);
+    }
+
+    public void deleteStaff(String employeeId) {
+        staffRepository.delete(employeeId);
+    }
 }

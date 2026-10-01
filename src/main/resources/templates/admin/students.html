@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin — Manage Students</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/admin/students"><strong>Manage Students</strong></a>
+        <a href="/admin/faculty">Manage Faculty &amp; Staff</a>
+        <a href="/logout">Logout (<span th:text="${loggedInUser}">admin</span>)</a>
+    </nav>
+
+    <h1>Manage Students</h1>
+    <p>Admin control panel for student enrollment and records.</p>
+
+    <!-- Feedback alerts -->
+    <div th:if="${successMessage}" style="background: #e6ffed; border: 1px solid #b7eb8f; padding: 10px; margin-bottom: 15px; color: #276749; border-radius: 4px;" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" style="background: #fff1f0; border: 1px solid #ffa39e; padding: 10px; margin-bottom: 15px; color: #cf1322; border-radius: 4px;" th:text="${errorMessage}"></div>
+
+    <!-- Filter & Search Toolbar -->
+    <div style="background: #fafafa; border: 1px solid #ddd; padding: 12px; margin-bottom: 15px;">
+        <form method="get" action="/admin/students" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <label>
+                <strong>Class:</strong>
+                <select name="standard">
+                    <option value="">All Classes</option>
+                    <option th:each="s : ${availableSections}"
+                            th:value="${s.Standard}"
+                            th:text="'Class ' + ${s.Standard}"
+                            th:selected="${s.Standard == standard}"></option>
+                </select>
+            </label>
+
+            <label>
+                <strong>Section:</strong>
+                <select name="division">
+                    <option value="">All Sections</option>
+                    <option th:each="s : ${availableSections}"
+                            th:value="${s.Division}"
+                            th:text="'Section ' + ${s.Division}"
+                            th:selected="${s.Division == division}"></option>
+                </select>
+            </label>
+
+            <label>
+                <strong>Search:</strong>
+                <input type="text" name="search" th:value="${search}" placeholder="Search name or ID..." style="width: 180px;">
+            </label>
+
+            <button type="submit" style="padding: 6px 14px;">Filter</button>
+            <a href="/admin/students" style="font-size: 14px; margin-left: 5px;">Clear Filter</a>
+        </form>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <a href="/admin/students/new" style="background: #2563eb; color: white; padding: 8px 14px; text-decoration: none; border-radius: 4px; display: inline-block;">+ Add New Student</a>
+    </div>
+
+    <!-- Student Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Admission No</th>
+                <th>Roll No</th>
+                <th>Full Name</th>
+                <th>Class</th>
+                <th>Section</th>
+                <th>House</th>
+                <th>Vehicle No</th>
+                <th>Remaining Fees</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="s : ${students}">
+                <td><strong th:text="${s.admissionNo}">A001</strong></td>
+                <td th:text="${s.rollNo}">1</td>
+                <td th:text="${s.fullName}">Rohan Mehta</td>
+                <td th:text="${s.standard}">10</td>
+                <td th:text="${s.division}">A</td>
+                <td th:text="${s.house}">Red</td>
+                <td th:text="${s.vehicleNo != null ? s.vehicleNo : 'None'}">V01</td>
+                <td th:text="'₹' + ${s.remainingFees}" th:style="${s.remainingFees > 0} ? 'color: red; font-weight: bold;' : 'color: green;'">₹5000.0</td>
+                <td style="white-space: nowrap;">
+                    <a th:href="@{'/admin/students/edit/' + ${s.admissionNo}}" style="margin-right: 8px;">Edit</a>
+                    <form th:action="@{'/admin/students/delete/' + ${s.admissionNo}}" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this student?');">
+                        <button type="submit" style="color: #dc2626; background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; font-size: inherit;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(students)}">
+                <td colspan="9" style="text-align: center; color: #666;">No students found matching the criteria.</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

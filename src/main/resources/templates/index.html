@@ -27,7 +27,10 @@
                 <a href="/staff/salary">My Salary</a>
                 <a th:if="${isDriver}" href="/staff/transport">My Bus Students</a>
             </span>
-            <a th:if="${loggedInRole == 'admin'}" href="/admin/students">Admin Portal</a>
+            <span th:if="${loggedInRole == 'admin'}">
+                <a href="/admin/students">Manage Students</a>
+                <a href="/admin/faculty">Manage Faculty &amp; Staff</a>
+            </span>
             <a href="/logout">Logout (<span th:text="${loggedInUser}">User</span>)</a>
         </span>
         <!-- When not logged in -->
@@ -54,7 +57,10 @@
             <a href="/staff/salary">My Salary →</a>
             <span th:if="${isDriver}">&nbsp;|&nbsp; <a href="/staff/transport">My Bus Students →</a></span>
         </span>
-        <a th:if="${loggedInRole == 'admin'}" href="/admin/students">Go to Admin Portal →</a>
+        <span th:if="${loggedInRole == 'admin'}">
+            <a href="/admin/students">Manage Students →</a> &nbsp;|&nbsp;
+            <a href="/admin/faculty">Manage Faculty &amp; Staff →</a>
+        </span>
     </div>
 
     <h2>Quick Stats</h2>
@@ -85,7 +91,10 @@
             <p style="margin: 4px 0;"><a href="/staff/salary">→ View My Salary Transactions</a></p>
             <p th:if="${isDriver}" style="margin: 4px 0;"><a href="/staff/transport">→ View Assigned Bus &amp; Students</a></p>
         </div>
-        <a th:if="${loggedInRole == 'admin'}" href="/admin/students">→ View Admin Dashboard</a>
+        <div th:if="${loggedInRole == 'admin'}">
+            <p style="margin: 4px 0;"><a href="/admin/students">→ Manage Student Records</a></p>
+            <p style="margin: 4px 0;"><a href="/admin/faculty">→ Manage Faculty &amp; Staff Records</a></p>
+        </div>
     </div>
 </body>
 </html>

@@ -31,4 +31,38 @@ public class StudentService {
     public Student getFullProfile(String admissionNo) {
         return studentRepository.findFullProfile(admissionNo);
     }
+
+    public List<Student> searchAndFilter(String standard, String division, String search) {
+        return studentRepository.searchAndFilter(standard, division, search);
+    }
+
+    public void saveStudent(Student s, String guardianRel, String gFirst, String gMiddle, String gLast, String gOcc, String gPhone) {
+        studentRepository.save(s);
+        if (guardianRel != null && !guardianRel.trim().isEmpty() && gFirst != null && !gFirst.trim().isEmpty()) {
+            studentRepository.saveGuardian(s.getAdmissionNo(), guardianRel.trim(), gFirst.trim(), gMiddle, gLast, gOcc != null ? gOcc.trim() : "", gPhone != null ? gPhone.trim() : "");
+        }
+    }
+
+    public void updateStudent(Student s, String guardianRel, String gFirst, String gMiddle, String gLast, String gOcc, String gPhone) {
+        studentRepository.update(s);
+        if (guardianRel != null && !guardianRel.trim().isEmpty() && gFirst != null && !gFirst.trim().isEmpty()) {
+            studentRepository.saveGuardian(s.getAdmissionNo(), guardianRel.trim(), gFirst.trim(), gMiddle, gLast, gOcc != null ? gOcc.trim() : "", gPhone != null ? gPhone.trim() : "");
+        }
+    }
+
+    public void deleteStudent(String admissionNo) {
+        studentRepository.delete(admissionNo);
+    }
+
+    public List<java.util.Map<String, Object>> getAvailableSections() {
+        return studentRepository.getAvailableSections();
+    }
+
+    public List<java.util.Map<String, Object>> getAvailableHouses() {
+        return studentRepository.getAvailableHouses();
+    }
+
+    public List<java.util.Map<String, Object>> getAvailableVehicles() {
+        return studentRepository.getAvailableVehicles();
+    }
 }

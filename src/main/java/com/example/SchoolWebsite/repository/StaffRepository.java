@@ -102,4 +102,65 @@ public class StaffRepository {
             return s;
         }, vehicleId);
     }
+
+    // Method 5: Find all staff members for Admin
+    public List<Staff> findAll() {
+        String sql = "SELECT Employee_ID, First_Name, Middle_Name, Last_Name, " +
+                     "Contact_Number, Designated_Role, Date_Of_Joining, Salary " +
+                     "FROM Staff ORDER BY Employee_ID ASC";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Staff s = new Staff();
+            s.setEmployeeId(rs.getString("Employee_ID"));
+            s.setFirstName(rs.getString("First_Name"));
+            s.setMiddleName(rs.getString("Middle_Name"));
+            s.setLastName(rs.getString("Last_Name"));
+            s.setContactNumber(rs.getString("Contact_Number"));
+            s.setDesignatedRole(rs.getString("Designated_Role"));
+            s.setDateOfJoining(rs.getString("Date_Of_Joining"));
+            s.setSalary(rs.getDouble("Salary"));
+            return s;
+        });
+    }
+
+    // Method 6: Save staff
+    public void save(Staff s) {
+        String sql = "INSERT INTO Staff (Employee_ID, First_Name, Middle_Name, Last_Name, " +
+                     "Contact_Number, Designated_Role, Date_Of_Joining, Salary) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql,
+            s.getEmployeeId(),
+            s.getFirstName(),
+            s.getMiddleName() != null && s.getMiddleName().trim().isEmpty() ? null : s.getMiddleName(),
+            s.getLastName() != null && s.getLastName().trim().isEmpty() ? null : s.getLastName(),
+            s.getContactNumber(),
+            s.getDesignatedRole(),
+            s.getDateOfJoining(),
+            s.getSalary()
+        );
+    }
+
+    // Method 7: Update staff
+    public void update(Staff s) {
+        String sql = "UPDATE Staff SET First_Name = ?, Middle_Name = ?, Last_Name = ?, " +
+                     "Contact_Number = ?, Designated_Role = ?, Date_Of_Joining = ?, Salary = ? " +
+                     "WHERE Employee_ID = ?";
+
+        jdbcTemplate.update(sql,
+            s.getFirstName(),
+            s.getMiddleName() != null && s.getMiddleName().trim().isEmpty() ? null : s.getMiddleName(),
+            s.getLastName() != null && s.getLastName().trim().isEmpty() ? null : s.getLastName(),
+            s.getContactNumber(),
+            s.getDesignatedRole(),
+            s.getDateOfJoining(),
+            s.getSalary(),
+            s.getEmployeeId()
+        );
+    }
+
+    // Method 8: Delete staff
+    public void delete(String employeeId) {
+        jdbcTemplate.update("DELETE FROM Staff WHERE Employee_ID = ?", employeeId);
+    }
 }

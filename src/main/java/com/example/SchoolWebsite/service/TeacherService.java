@@ -39,4 +39,20 @@ public class TeacherService {
     public List<com.example.SchoolWebsite.model.Payment> getSalaryHistory(String employeeId) {
         return teacherRepository.getSalaryHistory(employeeId);
     }
+
+    public List<Teacher> getAllTeachers() {
+        return teacherRepository.findAll();
+    }
+
+    public void saveTeacher(Teacher t, List<String> qualifications, List<String> specializations) {
+        teacherRepository.save(t, qualifications, specializations);
+    }
+
+    public void updateTeacher(Teacher t, List<String> qualifications, List<String> specializations) {
+        teacherRepository.update(t, qualifications, specializations);
+    }
+
+    public void deleteTeacher(String employeeId) {
+        teacherRepository.delete(employeeId);
+    }
 }

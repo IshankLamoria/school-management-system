@@ -148,4 +148,121 @@ public class TeacherRepository {
             return p;
         }, employeeId);
     }
+
+    // Method 7: Get all teachers for Admin faculty list
+    public List<Teacher> findAll() {
+        String sql = "SELECT t.Employee_ID, t.First_Name, t.Middle_Name, t.Last_Name, " +
+                     "t.Date_Of_Joining, t.Phone_No, t.Email, t.Salary, t.MentorOf, " +
+                     "h.House_Name, " +
+                     "sec.Standard AS classTeacherStandard, sec.Division AS classTeacherDivision " +
+                     "FROM Teacher t " +
+                     "LEFT JOIN House h ON t.MentorOf = h.Color " +
+                     "LEFT JOIN Section sec ON t.Employee_ID = sec.Class_Teacher " +
+                     "ORDER BY t.Employee_ID ASC";
+
+        List<Teacher> teachers = jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Teacher t = new Teacher();
+            t.setEmployeeId(rs.getString("Employee_ID"));
+            t.setFirstName(rs.getString("First_Name"));
+            t.setMiddleName(rs.getString("Middle_Name"));
+            t.setLastName(rs.getString("Last_Name"));
+            t.setDateOfJoining(rs.getString("Date_Of_Joining"));
+            t.setPhoneNo(rs.getString("Phone_No"));
+            t.setEmail(rs.getString("Email"));
+            t.setSalary(rs.getDouble("Salary"));
+            t.setMentorOf(rs.getString("MentorOf"));
+            t.setHouseName(rs.getString("House_Name"));
+            t.setClassTeacherStandard(rs.getString("classTeacherStandard"));
+            t.setClassTeacherDivision(rs.getString("classTeacherDivision"));
+            return t;
+        });
+
+        for (Teacher t : teachers) {
+            String qualSql = "SELECT Qualification FROM Teacher_Qualification WHERE Teacher_ID = ?";
+            t.setQualifications(jdbcTemplate.queryForList(qualSql, String.class, t.getEmployeeId()));
+
+            String specSql = "SELECT Specialization FROM Teacher_Specialization WHERE Teacher_ID = ?";
+            t.setSpecializations(jdbcTemplate.queryForList(specSql, String.class, t.getEmployeeId()));
+        }
+
+        return teachers;
+    }
+
+    // Method 8: Save new Teacher
+    public void save(Teacher t, List<String> qualifications, List<String> specializations) {
+        String sql = "INSERT INTO Teacher (Employee_ID, First_Name, Middle_Name, Last_Name, " +
+                     "Date_Of_Joining, Phone_No, Email, Salary, MentorOf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql,
+            t.getEmployeeId(),
+            t.getFirstName(),
+            t.getMiddleName() != null && t.getMiddleName().trim().isEmpty() ? null : t.getMiddleName(),
+            t.getLastName() != null && t.getLastName().trim().isEmpty() ? null : t.getLastName(),
+            t.getDateOfJoining(),
+            t.getPhoneNo(),
+            t.getEmail(),
+            t.getSalary(),
+            t.getMentorOf() != null && t.getMentorOf().trim().isEmpty() ? null : t.getMentorOf()
+        );
+
+        if (qualifications != null) {
+            for (String q : qualifications) {
+                if (q != null && !q.trim().isEmpty()) {
+                    jdbcTemplate.update("INSERT INTO Teacher_Qualification (Qualification, Teacher_ID) VALUES (?, ?)", q.trim(), t.getEmployeeId());
+                }
+            }
+        }
+
+        if (specializations != null) {
+            for (String s : specializations) {
+                if (s != null && !s.trim().isEmpty()) {
+                    jdbcTemplate.update("INSERT INTO Teacher_Specialization (Specialization, Teacher_ID) VALUES (?, ?)", s.trim(), t.getEmployeeId());
+                }
+            }
+        }
+    }
+
+    // Method 9: Update Teacher
+    public void update(Teacher t, List<String> qualifications, List<String> specializations) {
+        String sql = "UPDATE Teacher SET First_Name = ?, Middle_Name = ?, Last_Name = ?, " +
+                     "Date_Of_Joining = ?, Phone_No = ?, Email = ?, Salary = ?, MentorOf = ? " +
+                     "WHERE Employee_ID = ?";
+
+        jdbcTemplate.update(sql,
+            t.getFirstName(),
+            t.getMiddleName() != null && t.getMiddleName().trim().isEmpty() ? null : t.getMiddleName(),
+            t.getLastName() != null && t.getLastName().trim().isEmpty() ? null : t.getLastName(),
+            t.getDateOfJoining(),
+            t.getPhoneNo(),
+            t.getEmail(),
+            t.getSalary(),
+            t.getMentorOf() != null && t.getMentorOf().trim().isEmpty() ? null : t.getMentorOf(),
+            t.getEmployeeId()
+        );
+
+        // Replace qualifications
+        jdbcTemplate.update("DELETE FROM Teacher_Qualification WHERE Teacher_ID = ?", t.getEmployeeId());
+        if (qualifications != null) {
+            for (String q : qualifications) {
+                if (q != null && !q.trim().isEmpty()) {
+                    jdbcTemplate.update("INSERT INTO Teacher_Qualification (Qualification, Teacher_ID) VALUES (?, ?)", q.trim(), t.getEmployeeId());
+                }
+            }
+        }
+
+        // Replace specializations
+        jdbcTemplate.update("DELETE FROM Teacher_Specialization WHERE Teacher_ID = ?", t.getEmployeeId());
+        if (specializations != null) {
+            for (String s : specializations) {
+                if (s != null && !s.trim().isEmpty()) {
+                    jdbcTemplate.update("INSERT INTO Teacher_Specialization (Specialization, Teacher_ID) VALUES (?, ?)", s.trim(), t.getEmployeeId());
+                }
+            }
+        }
+    }
+
+    // Method 10: Delete Teacher
+    public void delete(String employeeId) {
+        jdbcTemplate.update("DELETE FROM Teacher WHERE Employee_ID = ?", employeeId);
+    }
 }
