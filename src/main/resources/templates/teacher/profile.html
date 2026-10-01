@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher Profile</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/teacher/profile">My Profile</a>
+        <a href="/teacher/schedule">My Schedule</a>
+        <a href="/teacher/salary">My Salary</a>
+        <a href="/teacher/students">Student Directory</a>
+        <a href="/logout">Logout (<span th:text="${teacher.employeeId}">T001</span>)</a>
+    </nav>
+
+    <h1>Teacher Profile</h1>
+    <p>Welcome, <strong th:text="${teacher.fullName}">Anita Verma</strong></p>
+
+    <!-- Personal Info -->
+    <h2>Personal & Employment Information</h2>
+    <table style="width: 550px;">
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Employee ID</td><td th:text="${teacher.employeeId}">T001</td></tr>
+        <tr><td>Full Name</td><td th:text="${teacher.fullName}">Anita Verma</td></tr>
+        <tr><td>Email</td><td th:text="${teacher.email}">anita.verma@school.edu</td></tr>
+        <tr><td>Phone Number</td><td th:text="${teacher.phoneNo}">9876000001</td></tr>
+        <tr><td>Date of Joining</td><td th:text="${teacher.dateOfJoining}">2015-07-10</td></tr>
+        <tr><td>Monthly Salary</td><td th:text="'₹' + ${teacher.salary}">₹52000.0</td></tr>
+    </table>
+
+    <!-- House Mentorship & Class Teacher Role -->
+    <h2>School Roles & Responsibilities</h2>
+    <table style="width: 550px;">
+        <tr><th>Responsibility</th><th>Details</th></tr>
+        <tr>
+            <td>House Mentorship</td>
+            <td>
+                <span th:if="${teacher.mentorOf != null}" th:text="${teacher.mentorOf} + ' (' + ${teacher.houseName} + ')'">Red (Phoenix House)</span>
+                <span th:unless="${teacher.mentorOf != null}" style="color: #666;">No House Assigned</span>
+            </td>
+        </tr>
+        <tr>
+            <td>Class Teacher Assignment</td>
+            <td>
+                <span th:if="${teacher.classTeacherStandard != null}" 
+                      th:text="'Class ' + ${teacher.classTeacherStandard} + ' - Section ' + ${teacher.classTeacherDivision} + ' (' + ${teacher.classTeacherRoomNo} + ')'">Class 10 - Section A (Room-101)</span>
+                <span th:unless="${teacher.classTeacherStandard != null}" style="color: #666;">Not Assigned as Class Teacher</span>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Qualifications & Specializations -->
+    <h2>Academic Credentials</h2>
+    <table style="width: 550px;">
+        <tr>
+            <th style="width: 50%;">Qualifications</th>
+            <th style="width: 50%;">Specializations</th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">
+                <ul th:unless="${#lists.isEmpty(teacher.qualifications)}" style="margin: 0; padding-left: 18px;">
+                    <li th:each="q : ${teacher.qualifications}" th:text="${q}">B.Ed</li>
+                </ul>
+                <span th:if="${#lists.isEmpty(teacher.qualifications)}" style="color: #666;">None listed</span>
+            </td>
+            <td style="vertical-align: top;">
+                <ul th:unless="${#lists.isEmpty(teacher.specializations)}" style="margin: 0; padding-left: 18px;">
+                    <li th:each="s : ${teacher.specializations}" th:text="${s}">Mathematics</li>
+                </ul>
+                <span th:if="${#lists.isEmpty(teacher.specializations)}" style="color: #666;">None listed</span>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

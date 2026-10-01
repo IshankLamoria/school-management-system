@@ -11,7 +11,11 @@
         <a href="/students">Student Directory</a>
         <!-- When logged in -->
         <span th:if="${isLoggedIn}">
-            <a th:if="${loggedInRole == 'student'}" href="/student/profile">My Profile</a>
+            <span th:if="${loggedInRole == 'student'}">
+                <a href="/student/profile">My Profile</a>
+                <a href="/student/subjects">My Subjects</a>
+                <a href="/student/fees">My Fees</a>
+            </span>
             <a th:if="${loggedInRole == 'teacher'}" href="/teacher/profile">My Profile</a>
             <a th:if="${loggedInRole == 'staff'}" href="/staff/profile">My Profile</a>
             <a th:if="${loggedInRole == 'admin'}" href="/admin/students">Admin Portal</a>

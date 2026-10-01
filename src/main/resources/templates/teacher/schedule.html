@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Teaching Schedule</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/teacher/profile">My Profile</a>
+        <a href="/teacher/schedule">My Schedule</a>
+        <a href="/teacher/salary">My Salary</a>
+        <a href="/teacher/students">Student Directory</a>
+        <a href="/logout">Logout (<span th:text="${teacher.employeeId}">T001</span>)</a>
+    </nav>
+
+    <h1>My Teaching Schedule & Classes</h1>
+    <p>Teacher: <strong th:text="${teacher.fullName}">Anita Verma</strong> (Employee ID: <span th:text="${teacher.employeeId}">T001</span>)</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Subject Code</th>
+                <th>Subject Name</th>
+                <th>Class (Standard)</th>
+                <th>Section (Division)</th>
+                <th>Classroom (Room No)</th>
+                <th>Enrolled Students</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${schedule}">
+                <td><strong th:text="${item.subjectCode}">MATH10</strong></td>
+                <td th:text="${item.subjectName}">Mathematics</td>
+                <td th:text="${item.standard}">10</td>
+                <td th:text="${item.division}">A</td>
+                <td th:text="${item.roomNo}">Room-101</td>
+                <td th:text="${item.enrolledCount} + ' Students'">2 Students</td>
+                <td>
+                    <a th:href="@{/teacher/course-students(subjectCode=${item.subjectCode},standard=${item.standard},division=${item.division})}">
+                        Show Students →
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(schedule)}">
+                <td colspan="7" style="text-align: center; color: #666;">No scheduled classes assigned currently.</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

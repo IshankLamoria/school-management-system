@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Profile</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/staff/profile">My Profile</a>
+        <a href="/staff/salary">My Salary</a>
+        <!-- Only driver gets transport link -->
+        <a th:if="${staff.isDriver()}" href="/staff/transport">My Bus Students</a>
+        <a href="/logout">Logout (<span th:text="${staff.employeeId}">S001</span>)</a>
+    </nav>
+
+    <h1>Staff Profile</h1>
+    <p>Welcome, <strong th:text="${staff.fullName}">Ramesh Kumar</strong></p>
+
+    <!-- Employment Details -->
+    <h2>Personal & Employment Information</h2>
+    <table style="width: 550px;">
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Employee ID</td><td th:text="${staff.employeeId}">S001</td></tr>
+        <tr><td>Full Name</td><td th:text="${staff.fullName}">Ramesh Kumar</td></tr>
+        <tr><td>Designated Role</td><td><strong th:text="${staff.designatedRole}">Driver</strong></td></tr>
+        <tr><td>Contact Number</td><td th:text="${staff.contactNumber}">9876500001</td></tr>
+        <tr><td>Date of Joining</td><td th:text="${staff.dateOfJoining}">2019-06-01</td></tr>
+        <tr><td>Monthly Salary</td><td th:text="'₹' + ${staff.salary}">₹22000.0</td></tr>
+    </table>
+
+    <!-- Driver-specific Transport Card -->
+    <div th:if="${staff.isDriver()}">
+        <h2>Assigned School Vehicle</h2>
+        <div th:if="${vehicle != null}" style="border: 1px solid #ccc; padding: 12px; max-width: 550px; background: #fafafa;">
+            <p><strong>Vehicle ID:</strong> <span th:text="${vehicle.vehicleId}">V01</span></p>
+            <p><strong>Registration Number:</strong> <span th:text="${vehicle.registrationNumber}">UP65AB1234</span></p>
+            <p><strong>Assigned Route:</strong> <span th:text="${vehicle.routeName}">Route A - Sigra</span></p>
+            <p><strong>Vehicle Capacity:</strong> <span th:text="${vehicle.capacity} + ' Passengers'">40 Passengers</span></p>
+            <p><a href="/staff/transport"><strong>→ View Students Travelling by This Vehicle</strong></a></p>
+        </div>
+        <div th:unless="${vehicle != null}" style="color: #666;">
+            <p>No vehicle currently registered under your Driver ID.</p>
+        </div>
+    </div>
+
+    <!-- Non-driver note -->
+    <div th:unless="${staff.isDriver()}" style="margin-top: 25px; padding: 12px; border: 1px solid #e5e7eb; background: #f9fafb; max-width: 550px;">
+        <p style="margin: 0; font-size: 14px; color: #555;">
+            <strong>Staff Notice:</strong> Your portal access is designated for employment records and salary transaction management.
+        </p>
+    </div>
+</body>
+</html>

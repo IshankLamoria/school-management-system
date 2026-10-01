@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Fee Status & History</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/students">Student Directory</a>
+        <a href="/student/profile">My Profile</a>
+        <a href="/student/subjects">My Subjects</a>
+        <a href="/student/fees">My Fees</a>
+        <a href="/logout">Logout (<span th:text="${student.admissionNo}">A001</span>)</a>
+    </nav>
+
+    <h1>My Fee Status & Payment History</h1>
+    <p>Student: <strong th:text="${student.firstName} + (${student.lastName != null} ? ' ' + ${student.lastName} : '')">Rohan Mehta</strong> (Admission No: <span th:text="${student.admissionNo}">A001</span>)</p>
+
+    <!-- Fee balance card -->
+    <h2>Current Fee Balance</h2>
+    <div style="padding: 12px; border: 1px solid #ccc; max-width: 400px; margin-bottom: 20px;">
+        <p style="margin: 4px 0;">Outstanding Amount:</p>
+        <div th:if="${student.remainingFees > 0}">
+            <h2 style="color: #dc2626; margin: 4px 0;" th:text="'₹' + ${student.remainingFees} + ' Pending'">₹5000.0 Pending</h2>
+            <p style="color: #666; margin: 0; font-size: 13px;">Please clear dues at the accounts office.</p>
+        </div>
+        <div th:unless="${student.remainingFees > 0}">
+            <h2 style="color: #16a34a; margin: 4px 0;">All Fees Cleared (₹0)</h2>
+            <p style="color: #666; margin: 0; font-size: 13px;">No outstanding payments.</p>
+        </div>
+    </div>
+
+    <!-- Payment history table -->
+    <h2>Payment History</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Date & Time</th>
+                <th>Amount</th>
+                <th>Payment Mode</th>
+                <th>Paid By (Sender)</th>
+                <th>Received By</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="p : ${payments}">
+                <td><strong th:text="${p.transactionId}">TXN001</strong></td>
+                <td th:text="${p.dateOfPayment}">2025-04-05</td>
+                <td th:text="'₹' + ${p.amount}">₹15000.0</td>
+                <td th:text="${p.paymentMode}">Online</td>
+                <td th:text="${p.sender}">Rohan Mehta</td>
+                <td th:text="${p.receiver}">School</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(payments)}">
+                <td colspan="6" style="text-align: center; color: #666;">No previous payment records found.</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

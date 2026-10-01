@@ -10,10 +10,23 @@
         <a href="/">Home</a>
         <!-- When logged in -->
         <span th:if="${isLoggedIn}">
-            <a href="/students">Student Directory</a>
-            <a th:if="${loggedInRole == 'student'}" href="/student/profile">My Profile</a>
-            <a th:if="${loggedInRole == 'teacher'}" href="/teacher/profile">My Profile</a>
-            <a th:if="${loggedInRole == 'staff'}" href="/staff/profile">My Profile</a>
+            <span th:if="${loggedInRole == 'student'}">
+                <a href="/students">Student Directory</a>
+                <a href="/student/profile">My Profile</a>
+                <a href="/student/subjects">My Subjects</a>
+                <a href="/student/fees">My Fees</a>
+            </span>
+            <span th:if="${loggedInRole == 'teacher'}">
+                <a href="/teacher/profile">My Profile</a>
+                <a href="/teacher/schedule">My Schedule</a>
+                <a href="/teacher/salary">My Salary</a>
+                <a href="/teacher/students">Student Directory</a>
+            </span>
+            <span th:if="${loggedInRole == 'staff'}">
+                <a href="/staff/profile">My Profile</a>
+                <a href="/staff/salary">My Salary</a>
+                <a th:if="${isDriver}" href="/staff/transport">My Bus Students</a>
+            </span>
             <a th:if="${loggedInRole == 'admin'}" href="/admin/students">Admin Portal</a>
             <a href="/logout">Logout (<span th:text="${loggedInUser}">User</span>)</a>
         </span>
@@ -30,8 +43,17 @@
     <div th:if="${isLoggedIn}" style="background: #eef2ff; border: 1px solid #c7d2fe; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
         Logged in as: <strong th:text="${loggedInUser}"></strong> (<span th:text="${loggedInRole}"></span>) &nbsp;|&nbsp;
         <a th:if="${loggedInRole == 'student'}" href="/student/profile">Go to My Profile →</a>
-        <a th:if="${loggedInRole == 'teacher'}" href="/teacher/profile">Go to My Profile →</a>
-        <a th:if="${loggedInRole == 'staff'}" href="/staff/profile">Go to My Profile →</a>
+        <span th:if="${loggedInRole == 'teacher'}">
+            <a href="/teacher/profile">My Profile →</a> &nbsp;|&nbsp;
+            <a href="/teacher/schedule">My Schedule →</a> &nbsp;|&nbsp;
+            <a href="/teacher/salary">My Salary →</a> &nbsp;|&nbsp;
+            <a href="/teacher/students">Student Directory →</a>
+        </span>
+        <span th:if="${loggedInRole == 'staff'}">
+            <a href="/staff/profile">My Profile →</a> &nbsp;|&nbsp;
+            <a href="/staff/salary">My Salary →</a>
+            <span th:if="${isDriver}">&nbsp;|&nbsp; <a href="/staff/transport">My Bus Students →</a></span>
+        </span>
         <a th:if="${loggedInRole == 'admin'}" href="/admin/students">Go to Admin Portal →</a>
     </div>
 
@@ -49,9 +71,20 @@
         <a href="/login">→ Go to Login</a>
     </div>
     <div th:if="${isLoggedIn}">
-        <a th:if="${loggedInRole == 'student'}" href="/student/profile">→ View My Student Profile</a>
-        <a th:if="${loggedInRole == 'teacher'}" href="/teacher/profile">→ View My Teacher Profile</a>
-        <a th:if="${loggedInRole == 'staff'}" href="/staff/profile">→ View My Staff Profile</a>
+        <div th:if="${loggedInRole == 'student'}">
+            <a href="/student/profile">→ View My Student Profile</a>
+        </div>
+        <div th:if="${loggedInRole == 'teacher'}">
+            <p style="margin: 4px 0;"><a href="/teacher/profile">→ View My Teacher Profile</a></p>
+            <p style="margin: 4px 0;"><a href="/teacher/schedule">→ View My Teaching Schedule</a></p>
+            <p style="margin: 4px 0;"><a href="/teacher/salary">→ View My Salary Transactions</a></p>
+            <p style="margin: 4px 0;"><a href="/teacher/students">→ View Student Directory</a></p>
+        </div>
+        <div th:if="${loggedInRole == 'staff'}">
+            <p style="margin: 4px 0;"><a href="/staff/profile">→ View My Staff Profile</a></p>
+            <p style="margin: 4px 0;"><a href="/staff/salary">→ View My Salary Transactions</a></p>
+            <p th:if="${isDriver}" style="margin: 4px 0;"><a href="/staff/transport">→ View Assigned Bus &amp; Students</a></p>
+        </div>
         <a th:if="${loggedInRole == 'admin'}" href="/admin/students">→ View Admin Dashboard</a>
     </div>
 </body>

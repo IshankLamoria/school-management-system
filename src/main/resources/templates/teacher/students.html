@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Class Student Directory</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/teacher/profile">My Profile</a>
+        <a href="/teacher/schedule">My Schedule</a>
+        <a href="/teacher/salary">My Salary</a>
+        <a href="/teacher/students">Student Directory</a>
+        <a href="/logout">Logout (<span th:text="${teacher.employeeId}">T001</span>)</a>
+    </nav>
+
+    <!-- When teacher IS a class teacher -->
+    <div th:if="${isClassTeacher}">
+        <h1 th:text="'Class ' + ${teacher.classTeacherStandard} + ' - Section ' + ${teacher.classTeacherDivision} + ' Directory'">Class 10 - Section A Directory</h1>
+        <p>
+            Class Teacher: <strong th:text="${teacher.fullName}">Anita Verma</strong> (Employee ID: <span th:text="${teacher.employeeId}">T001</span>) &nbsp;|&nbsp;
+            Room: <strong th:text="${teacher.classTeacherRoomNo}">Room-101</strong>
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Admission No</th>
+                    <th>Name</th>
+                    <th>Class</th>
+                    <th>Section</th>
+                    <th>House</th>
+                    <th>Remaining Fees</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="s : ${students}">
+                    <td th:text="${s.rollNo}">1</td>
+                    <td><strong th:text="${s.admissionNo}">A001</strong></td>
+                    <td th:text="${s.firstName} + (${s.lastName != null} ? ' ' + ${s.lastName} : '')">Rohan Mehta</td>
+                    <td th:text="${s.standard}">10</td>
+                    <td th:text="${s.division}">A</td>
+                    <td th:text="${s.house}">Red</td>
+                    <td th:text="'₹' + ${s.remainingFees}" th:style="${s.remainingFees > 0} ? 'color: red; font-weight: bold;' : 'color: green;'">₹5000.0</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(students)}">
+                    <td colspan="7" style="text-align: center; color: #666;">No students found in your class.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- When teacher is NOT a class teacher -->
+    <div th:unless="${isClassTeacher}">
+        <h1>Student Directory</h1>
+        <p>Teacher: <strong th:text="${teacher.fullName}">Anita Verma</strong> (Employee ID: <span th:text="${teacher.employeeId}">T001</span>)</p>
+
+        <div style="padding: 15px; border: 1px solid #ccc; background: #fafafa; max-width: 600px; margin-top: 15px;">
+            <p style="margin: 0; font-size: 15px; color: #555;">
+                You are not currently assigned as a <strong>Class Teacher</strong> for any section.
+            </p>
+            <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">
+                To view students enrolled in the courses you teach, please go to <a href="/teacher/schedule"><strong>My Schedule</strong></a> and click <em>Show Students</em> next to your course.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

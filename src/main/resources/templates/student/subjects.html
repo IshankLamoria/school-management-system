@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Subjects & Grades</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/students">Student Directory</a>
+        <a href="/student/profile">My Profile</a>
+        <a href="/student/subjects">My Subjects</a>
+        <a href="/student/fees">My Fees</a>
+        <a href="/logout">Logout (<span th:text="${student.admissionNo}">A001</span>)</a>
+    </nav>
+
+    <h1>My Enrolled Subjects & Grades</h1>
+    <p>Student: <strong th:text="${student.firstName} + (${student.lastName != null} ? ' ' + ${student.lastName} : '')">Rohan Mehta</strong> (Admission No: <span th:text="${student.admissionNo}">A001</span>)</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Subject Code</th>
+                <th>Subject Name</th>
+                <th>Periods / Week</th>
+                <th>Assigned Teacher</th>
+                <th>Grade</th>
+                <th>Reference Books</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="e : ${enrollments}">
+                <td th:text="${e.subjectCode}">MATH10</td>
+                <td th:text="${e.subjectName}">Mathematics</td>
+                <td th:text="${e.periodsPerWeek}">6</td>
+                <td th:text="${e.teacherName}">Anita Verma</td>
+                <td><strong th:text="${e.grade != null ? e.grade : 'N/A'}">A</strong></td>
+                <td>
+                    <span th:if="${#lists.isEmpty(e.referenceBooks)}">None</span>
+                    <ul th:unless="${#lists.isEmpty(e.referenceBooks)}" style="margin: 0; padding-left: 18px;">
+                        <li th:each="book : ${e.referenceBooks}" th:text="${book}">NCERT Class 10 Maths</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(enrollments)}">
+                <td colspan="6" style="text-align: center; color: #666;">No enrolled subjects found.</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

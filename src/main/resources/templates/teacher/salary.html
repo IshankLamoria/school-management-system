@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Salary Transactions</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/teacher/profile">My Profile</a>
+        <a href="/teacher/schedule">My Schedule</a>
+        <a href="/teacher/salary">My Salary</a>
+        <a href="/teacher/students">Student Directory</a>
+        <a href="/logout">Logout (<span th:text="${teacher.employeeId}">T001</span>)</a>
+    </nav>
+
+    <h1>My Salary & Payment History</h1>
+    <p>Teacher: <strong th:text="${teacher.fullName}">Anita Verma</strong> (Employee ID: <span th:text="${teacher.employeeId}">T001</span>)</p>
+
+    <!-- Monthly compensation card -->
+    <h2>Monthly Base Compensation</h2>
+    <div style="padding: 12px; border: 1px solid #ccc; max-width: 400px; margin-bottom: 20px;">
+        <p style="margin: 4px 0;">Official Monthly Salary:</p>
+        <h2 style="color: #2563eb; margin: 4px 0;" th:text="'₹' + ${teacher.salary}">₹52000.0</h2>
+        <p style="color: #666; margin: 0; font-size: 13px;">Contracted salary under employment records.</p>
+    </div>
+
+    <!-- Salary Transactions History Table -->
+    <h2>Disbursed Salary Transactions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Date & Time</th>
+                <th>Amount</th>
+                <th>Payment Mode</th>
+                <th>Paid By (Sender)</th>
+                <th>Disbursed To</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="p : ${salaryPayments}">
+                <td><strong th:text="${p.transactionId}">TXN002</strong></td>
+                <td th:text="${p.dateOfPayment}">2025-04-05</td>
+                <td th:text="'₹' + ${p.amount}" style="font-weight: bold; color: #16a34a;">₹52000.0</td>
+                <td th:text="${p.paymentMode}">Bank Transfer</td>
+                <td th:text="${p.sender}">School</td>
+                <td th:text="${p.receiver}">Anita Verma</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(salaryPayments)}">
+                <td colspan="6" style="text-align: center; color: #666;">No salary transaction records found.</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -75,7 +75,11 @@ INSERT INTO Class_Schedule VALUES
 
 INSERT INTO Payments VALUES
 ('TXN001','2025-04-05','Fee','School','Rohan Mehta','Online',15000.00),
-('TXN002','2025-04-05','Salary','Anita Verma','School','Bank Transfer',52000.00);
+('TXN002','2025-04-05','Salary','Anita Verma','School','Bank Transfer',52000.00),
+('TXN003','2025-04-05','Salary','Ramesh Kumar','School','Bank Transfer',22000.00),
+('TXN004','2025-04-05','Salary','Sunita Sharma','School','Bank Transfer',35000.00);
 
 INSERT INTO Fees VALUES ('TXN001','A001');
 INSERT INTO Teacher_Salary VALUES ('TXN002','T001');
+INSERT INTO Staff_Salary VALUES ('TXN003','S001');
+INSERT INTO Staff_Salary VALUES ('TXN004','S002');

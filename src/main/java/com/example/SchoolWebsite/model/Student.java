@@ -20,6 +20,7 @@ public class Student {
     private double remainingFees;
     private String roomNo;
     private String classTeacherName;
+    private String grade;
 
     // Constructors
     public Student() {}
@@ -91,6 +92,9 @@ public class Student {
 
     public String getClassTeacherName() { return classTeacherName; }
     public void setClassTeacherName(String classTeacherName) { this.classTeacherName = classTeacherName; }
+
+    public String getGrade() { return grade; }
+    public void setGrade(String grade) { this.grade = grade; }
 
     // Helper: full name
     public String getFullName() {

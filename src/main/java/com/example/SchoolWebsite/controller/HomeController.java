@@ -15,10 +15,12 @@ public class HomeController {
 
     private final StudentService studentService;
     private final StatsRepository statsRepository;
+    private final com.example.SchoolWebsite.service.StaffService staffService;
 
-    public HomeController(StudentService studentService, StatsRepository statsRepository) {
+    public HomeController(StudentService studentService, StatsRepository statsRepository, com.example.SchoolWebsite.service.StaffService staffService) {
         this.studentService = studentService;
         this.statsRepository = statsRepository;
+        this.staffService = staffService;
     }
 
     @GetMapping("/")
@@ -32,9 +34,18 @@ public class HomeController {
         // Session information so navbar and page reflect login state
         String userId = (String) session.getAttribute("userId");
         String role = (String) session.getAttribute("role");
+        boolean isDriver = false;
+        if ("staff".equals(role) && userId != null) {
+            com.example.SchoolWebsite.model.Staff staff = staffService.getStaffProfile(userId);
+            if (staff != null && staff.isDriver()) {
+                isDriver = true;
+            }
+        }
+
         model.addAttribute("isLoggedIn", userId != null);
         model.addAttribute("loggedInUser", userId);
         model.addAttribute("loggedInRole", role);
+        model.addAttribute("isDriver", isDriver);
 
         return "index"; // looks for index.html
     }
@@ -62,8 +73,17 @@ public class HomeController {
                 students = List.of();
                 directoryTitle = "Class Directory";
             }
+        } else if ("teacher".equals(role)) {
+            return "redirect:/teacher/students";
+        } else if ("staff".equals(role)) {
+            // Staff members are not permitted to view general student directory
+            com.example.SchoolWebsite.model.Staff staff = staffService.getStaffProfile(userId);
+            if (staff != null && staff.isDriver()) {
+                return "redirect:/staff/transport";
+            }
+            return "redirect:/staff/profile";
         } else {
-            // Teacher, Staff, Admin can view all students
+            // Admin can view all students
             students = studentService.findAll();
             directoryTitle = "All Students Directory";
         }
