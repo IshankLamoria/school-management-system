@@ -1,9 +1,14 @@
-package com.example.SchoolWebsite;
+// FIX: Package declaration was 'com.example.SchoolWebsite' (the root package) but this file
+// physically lives under the 'repository/' sub-folder. Java resolves classes by their declared
+// package, so javac compiled it fine, but IDEs flagged it with a 'package does not match
+// directory structure' warning (red/yellow squiggle on line 1).
+// Corrected to match the actual folder path: com.example.SchoolWebsite.repository
+package com.example.SchoolWebsite.repository;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.example.SchoolWebsite.repository.StudentRepository;
+// import com.example.SchoolWebsite.repository.StudentRepository;
 
 // A CommandLineRunner's run() method executes once, right after startup.
 // TEMPORARY: used only to prove the database query works.
