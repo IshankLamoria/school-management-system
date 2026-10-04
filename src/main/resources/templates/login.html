@@ -16,23 +16,32 @@
     <div th:if="${error}" class="error" th:text="${error}">Error</div>
 
     <form method="post" action="/login">
-        <h3>Select Role:</h3>
-        <label><input type="radio" name="role" value="student"> Student</label><br>
-        <label><input type="radio" name="role" value="teacher"> Teacher</label><br>
-        <label><input type="radio" name="role" value="staff"> Staff</label><br>
-        <label><input type="radio" name="role" value="admin"> Admin</label><br>
-        <br>
-
         <label>Your ID:<br>
-            <input type="text" name="userId" placeholder="e.g. A001, T001, S001, admin" required style="width:250px;">
+            <input type="text" id="userId" name="userId" th:value="${userId}" placeholder="e.g. A001, T001, S001, admin" required style="width:250px;">
         </label><br><br>
 
-        <label>Password (admin only):<br>
-            <input type="password" name="password" placeholder="Leave blank for non-admin" style="width:250px;">
-        </label><br><br>
+        <div id="passwordGroup" th:style="${showPassword} ? 'display: block;' : 'display: none;'">
+            <label>Password (admin only):<br>
+                <input type="password" id="password" name="password" placeholder="admin123" style="width:250px;">
+            </label><br><br>
+        </div>
 
         <button type="submit">Login</button>
     </form>
+
+    <script>
+        const userIdInput = document.getElementById('userId');
+        const pwdGroup = document.getElementById('passwordGroup');
+        function checkAdmin() {
+            if (userIdInput.value.trim().toLowerCase() === 'admin') {
+                pwdGroup.style.display = 'block';
+            } else if (!document.querySelector('.error')) {
+                pwdGroup.style.display = 'none';
+            }
+        }
+        userIdInput.addEventListener('input', checkAdmin);
+        checkAdmin();
+    </script>
 
     <br>
     <p><small>Test credentials — Student: A001 | Teacher: T001 | Staff: S001 | Admin: admin / admin123</small></p>

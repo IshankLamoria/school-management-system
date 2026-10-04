@@ -41,57 +41,72 @@ public class LoginController {
         return "login";
     }
 
-    // Handle login form submission
+    // Handle login form submission (role detected automatically by backend)
     @PostMapping("/login")
     public String handleLogin(
-            @RequestParam String role,
-            @RequestParam String userId,
+            @RequestParam(required = false) String userId,
             @RequestParam(required = false) String password,
             HttpSession session,
             Model model) {
 
-        switch (role) {
-            case "student":
-                if (statsRepository.studentExists(userId)) {
-                    session.setAttribute("userId", userId);
-                    session.setAttribute("role", "student");
-                    return "redirect:/student/profile";
-                }
-                model.addAttribute("error", "No student found with Admission No: " + userId);
-                break;
-
-            case "teacher":
-                if (statsRepository.teacherExists(userId)) {
-                    session.setAttribute("userId", userId);
-                    session.setAttribute("role", "teacher");
-                    return "redirect:/teacher/profile";
-                }
-                model.addAttribute("error", "No teacher found with Employee ID: " + userId);
-                break;
-
-            case "staff":
-                if (statsRepository.staffExists(userId)) {
-                    session.setAttribute("userId", userId);
-                    session.setAttribute("role", "staff");
-                    return "redirect:/staff/profile";
-                }
-                model.addAttribute("error", "No staff found with Employee ID: " + userId);
-                break;
-
-            case "admin":
-                if (ADMIN_ID.equals(userId) && ADMIN_PASSWORD.equals(password)) {
-                    session.setAttribute("userId", userId);
-                    session.setAttribute("role", "admin");
-                    return "redirect:/admin/students";
-                }
-                model.addAttribute("error", "Invalid admin credentials.");
-                break;
-
-            default:
-                model.addAttribute("error", "Please select a role.");
+        if (userId == null || userId.trim().isEmpty()) {
+            model.addAttribute("error", "Please enter your ID.");
+            return "login";
         }
 
-        model.addAttribute("selectedRole", role);
+        String rawId = userId.trim();
+        String upperId = rawId.toUpperCase();
+
+        // 1. Admin authentication check
+        if (ADMIN_ID.equalsIgnoreCase(rawId)) {
+            if (password == null || password.trim().isEmpty()) {
+                model.addAttribute("error", "Admin password is required.");
+                model.addAttribute("userId", rawId);
+                model.addAttribute("showPassword", true);
+                return "login";
+            }
+            if (ADMIN_PASSWORD.equals(password)) {
+                session.setAttribute("userId", ADMIN_ID);
+                session.setAttribute("role", "admin");
+                return "redirect:/admin/students";
+            } else {
+                model.addAttribute("error", "Invalid admin credentials.");
+                model.addAttribute("userId", rawId);
+                model.addAttribute("showPassword", true);
+                return "login";
+            }
+        }
+
+        // 2. Student check
+        String studentId = statsRepository.studentExists(rawId) ? rawId :
+                          (statsRepository.studentExists(upperId) ? upperId : null);
+        if (studentId != null) {
+            session.setAttribute("userId", studentId);
+            session.setAttribute("role", "student");
+            return "redirect:/student/profile";
+        }
+
+        // 3. Teacher check
+        String teacherId = statsRepository.teacherExists(rawId) ? rawId :
+                          (statsRepository.teacherExists(upperId) ? upperId : null);
+        if (teacherId != null) {
+            session.setAttribute("userId", teacherId);
+            session.setAttribute("role", "teacher");
+            return "redirect:/teacher/profile";
+        }
+
+        // 4. Staff check
+        String staffId = statsRepository.staffExists(rawId) ? rawId :
+                        (statsRepository.staffExists(upperId) ? upperId : null);
+        if (staffId != null) {
+            session.setAttribute("userId", staffId);
+            session.setAttribute("role", "staff");
+            return "redirect:/staff/profile";
+        }
+
+        // ID not found in any table
+        model.addAttribute("error", "No account found matching ID: " + rawId);
+        model.addAttribute("userId", rawId);
         return "login";
     }
 
