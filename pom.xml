@@ -38,9 +38,16 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+		<!--
+			FIX: Was 'spring-boot-starter-webmvc' — that is an internal Spring Boot 4.x sub-module,
+			not a public starter. The correct public-facing artifact has always been
+			'spring-boot-starter-web'. Using the internal name caused the IDE (IntelliJ / VS Code)
+			to fail its Maven index lookup and draw red squiggles across the entire project,
+			even though javac accepted it via transitive resolution.
+		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
@@ -48,19 +55,19 @@
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!--
+			FIX: 'spring-boot-starter-jdbc-test', 'spring-boot-starter-thymeleaf-test', and
+			'spring-boot-starter-webmvc-test' do NOT exist as real public Maven artifacts.
+			They are internal implementation modules that Spring Boot 4.x uses inside its
+			own build — they are never meant to be declared by end-users. Declaring them here
+			caused the IDE's Maven resolver to show 'artifact not found' errors.
+			The single correct test starter that covers all three concerns is
+			'spring-boot-starter-test', which already pulls in JUnit 5, Mockito,
+			Spring Test, and the web/JDBC/Thymeleaf test slices automatically.
+		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
