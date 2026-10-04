@@ -1,10 +1,19 @@
-package com.example.SchoolWebsite;
+// FIX: Package declaration was 'com.example.SchoolWebsite' (the root package) but this file
+// physically lives under the 'controller/' sub-folder. Same pattern as TempRunner.java.
+// Corrected to match the actual folder path: com.example.SchoolWebsite.controller
+package com.example.SchoolWebsite.controller;
 
 import java.util.List;
+import com.example.SchoolWebsite.model.Staff;
 import com.example.SchoolWebsite.model.Student;
+import com.example.SchoolWebsite.service.StaffService;
 import com.example.SchoolWebsite.service.StudentService;
 import com.example.SchoolWebsite.repository.StatsRepository;
 
+// FIX: StaffService and Staff were not imported — they were referenced via verbose inline
+// fully-qualified names (e.g. com.example.SchoolWebsite.service.StaffService) throughout
+// the file. This is not wrong, but it clutters the code and triggers IDE style warnings.
+// Added proper imports and replaced all inline FQNs with the short class names.
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +24,9 @@ public class HomeController {
 
     private final StudentService studentService;
     private final StatsRepository statsRepository;
-    private final com.example.SchoolWebsite.service.StaffService staffService;
+    private final StaffService staffService;
 
-    public HomeController(StudentService studentService, StatsRepository statsRepository, com.example.SchoolWebsite.service.StaffService staffService) {
+    public HomeController(StudentService studentService, StatsRepository statsRepository, StaffService staffService) {
         this.studentService = studentService;
         this.statsRepository = statsRepository;
         this.staffService = staffService;
@@ -36,7 +45,7 @@ public class HomeController {
         String role = (String) session.getAttribute("role");
         boolean isDriver = false;
         if ("staff".equals(role) && userId != null) {
-            com.example.SchoolWebsite.model.Staff staff = staffService.getStaffProfile(userId);
+            Staff staff = staffService.getStaffProfile(userId);
             if (staff != null && staff.isDriver()) {
                 isDriver = true;
             }
@@ -77,7 +86,7 @@ public class HomeController {
             return "redirect:/teacher/students";
         } else if ("staff".equals(role)) {
             // Staff members are not permitted to view general student directory
-            com.example.SchoolWebsite.model.Staff staff = staffService.getStaffProfile(userId);
+            Staff staff = staffService.getStaffProfile(userId);
             if (staff != null && staff.isDriver()) {
                 return "redirect:/staff/transport";
             }
