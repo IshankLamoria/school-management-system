@@ -163,4 +163,12 @@ public class StaffRepository {
     public void delete(String employeeId) {
         jdbcTemplate.update("DELETE FROM Staff WHERE Employee_ID = ?", employeeId);
     }
+
+    // Method 9: Get distinct designated roles
+    public List<String> findDistinctRoles() {
+        String sql = "SELECT DISTINCT Designated_Role FROM Staff " +
+                     "WHERE Designated_Role IS NOT NULL AND TRIM(Designated_Role) <> '' " +
+                     "ORDER BY Designated_Role ASC";
+        return jdbcTemplate.queryForList(sql, String.class);
+    }
 }

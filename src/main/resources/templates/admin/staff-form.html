@@ -44,7 +44,14 @@
             <tr>
                 <td><strong>Designated Role:</strong></td>
                 <td>
-                    <input type="text" name="designatedRole" th:value="${staff.designatedRole}" required placeholder="e.g. Driver, Accountant, Librarian" style="width: 250px;">
+                    <select name="designatedRole" required style="width: 264px; border: 1px solid #767676; border-radius: 2px; box-sizing: border-box; background-color: #fff;">
+                        <option value="" disabled th:selected="${staff.designatedRole == null or staff.designatedRole == ''}">-- Select Role --</option>
+                        <option th:each="r : ${roles}"
+                                th:value="${r}"
+                                th:text="${r}"
+                                th:selected="${staff.designatedRole != null and staff.designatedRole.equalsIgnoreCase(r)}">
+                        </option>
+                    </select>
                 </td>
             </tr>
             <tr>

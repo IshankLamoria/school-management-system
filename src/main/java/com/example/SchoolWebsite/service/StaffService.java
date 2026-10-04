@@ -7,10 +7,24 @@ import com.example.SchoolWebsite.model.VehicleInfo;
 import com.example.SchoolWebsite.repository.StaffRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class StaffService {
+
+    private static final List<String> DEFAULT_ROLES = List.of(
+        "Driver",
+        "Accountant",
+        "Peon",
+        "Cleaning Staff",
+        "Librarian",
+        "Security Guard",
+        "Lab Assistant",
+        "Office Clerk"
+    );
 
     private final StaffRepository staffRepository;
 
@@ -36,6 +50,19 @@ public class StaffService {
 
     public List<Staff> getAllStaff() {
         return staffRepository.findAll();
+    }
+
+    public List<String> getAllRoles() {
+        Set<String> roles = new LinkedHashSet<>(DEFAULT_ROLES);
+        List<String> dbRoles = staffRepository.findDistinctRoles();
+        if (dbRoles != null) {
+            for (String role : dbRoles) {
+                if (role != null && !role.trim().isEmpty()) {
+                    roles.add(role.trim());
+                }
+            }
+        }
+        return new ArrayList<>(roles);
     }
 
     public void saveStaff(Staff s) {

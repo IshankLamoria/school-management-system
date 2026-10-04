@@ -350,6 +350,7 @@ public class AdminController {
         staff.setDateOfJoining(java.time.LocalDate.now().toString());
 
         model.addAttribute("staff", staff);
+        model.addAttribute("roles", staffService.getAllRoles());
         model.addAttribute("mode", "create");
         model.addAttribute("isLoggedIn", true);
         model.addAttribute("loggedInUser", session.getAttribute("userId"));
@@ -387,6 +388,7 @@ public class AdminController {
         }
 
         model.addAttribute("staff", staff);
+        model.addAttribute("roles", staffService.getAllRoles());
         model.addAttribute("mode", "edit");
         model.addAttribute("isLoggedIn", true);
         model.addAttribute("loggedInUser", session.getAttribute("userId"));
