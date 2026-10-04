@@ -1,0 +1,10 @@
+spring.application.name=SchoolWebsite
+
+# Database Configuration (Update with your local MySQL credentials)
+spring.datasource.url=jdbc:mysql://localhost:3306/school_dbms?useSSL=false&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=your_mysql_password_here
+
+# Session settings
+server.servlet.session.timeout=2h
+server.servlet.session.cookie.max-age=7200
