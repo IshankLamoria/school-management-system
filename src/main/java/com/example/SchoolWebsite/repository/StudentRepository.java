@@ -17,7 +17,7 @@ public class StudentRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Method 1: Get all students (for student directory listing)
+    // Get all students (for student directory listing)
     public List<Student> findAll() {
         String sql = "SELECT Admission_No AS admissionNo, Roll_No AS rollNo, First_Name AS firstName, " +
                      "Last_Name AS lastName, Standard AS standard, Division AS division, " +
@@ -38,7 +38,7 @@ public class StudentRepository {
         });
     }
 
-    // Method 2: Get a single student by their Admission Number (full record)
+    // Get a single student by their Admission Number (full record)
     public Student findByAdmissionNo(String admissionNo) {
         String sql = "SELECT Admission_No AS admissionNo, Roll_No AS rollNo, First_Name AS firstName, " +
                      "Middle_Name AS middleName, Last_Name AS lastName, Blood_Group AS bloodGroup, " +
@@ -70,7 +70,7 @@ public class StudentRepository {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    // Method 3: Get all students filtered by a specific Standard/Class (e.g., "10")
+    // Get all students filtered by a specific Standard/Class (e.g., "10")
     public List<Student> findByStandard(String standard) {
         String sql = "SELECT Admission_No AS admissionNo, Roll_No AS rollNo, First_Name AS firstName, " +
                      "Last_Name AS lastName, Standard AS standard, Division AS division, " +
@@ -91,7 +91,7 @@ public class StudentRepository {
         }, standard);
     }
 
-    // Method 4: Get students of a specific class and section (Standard and Division)
+    // Get students of a specific class and section (Standard and Division)
     public List<Student> findByStandardAndDivision(String standard, String division) {
         String sql = "SELECT Admission_No AS admissionNo, Roll_No AS rollNo, First_Name AS firstName, " +
                      "Last_Name AS lastName, Standard AS standard, Division AS division, " +
@@ -112,7 +112,7 @@ public class StudentRepository {
         }, standard, division);
     }
 
-    // Method 4: Get FULL student profile with JOINs (for the profile page)
+    // Get FULL student profile with JOINs (for the profile page)
     // Joins Student + House + Section + Teacher (class teacher) + Transport
     public Student findFullProfile(String admissionNo) {
         String sql = "SELECT s.Admission_No, s.Roll_No, s.First_Name, s.Middle_Name, s.Last_Name, " +
@@ -154,7 +154,7 @@ public class StudentRepository {
         }, admissionNo);
     }
 
-    // Method 5: Search and filter students for Admin
+    // Search and filter students for Admin
     public List<Student> searchAndFilter(String standard, String division, String search) {
         StringBuilder sql = new StringBuilder(
             "SELECT Admission_No AS admissionNo, Roll_No AS rollNo, First_Name AS firstName, " +
@@ -205,7 +205,7 @@ public class StudentRepository {
         }, params.toArray());
     }
 
-    // Method 6: Insert new Student
+    // Insert new Student
     public void save(Student s) {
         String sql = "INSERT INTO Student (Admission_No, Roll_No, First_Name, Middle_Name, Last_Name, " +
                      "Blood_Group, Standard, Division, House, Vehicle_No, Date_Of_Admission, " +
@@ -230,7 +230,7 @@ public class StudentRepository {
         );
     }
 
-    // Method 7: Update existing Student
+    // Update existing Student
     public void update(Student s) {
         String sql = "UPDATE Student SET Roll_No = ?, First_Name = ?, Middle_Name = ?, Last_Name = ?, " +
                      "Blood_Group = ?, Standard = ?, Division = ?, House = ?, Vehicle_No = ?, " +
@@ -256,43 +256,43 @@ public class StudentRepository {
         );
     }
 
-    // Method 8: Delete Student
+    // Delete Student
     public void delete(String admissionNo) {
         String sql = "DELETE FROM Student WHERE Admission_No = ?";
         jdbcTemplate.update(sql, admissionNo);
     }
 
-    // Helper: Available Classes (Standards)
+    // Available Classes (Standards)
     public List<String> getAvailableClasses() {
         String sql = "SELECT Standard FROM Class ORDER BY CAST(Standard AS UNSIGNED)";
         return jdbcTemplate.queryForList(sql, String.class);
     }
 
-    // Helper: Available Divisions
+    // Available Divisions
     public List<String> getAvailableDivisions() {
         String sql = "SELECT DISTINCT Division FROM Section ORDER BY Division";
         return jdbcTemplate.queryForList(sql, String.class);
     }
 
-    // Helper: Available Sections (Standard and Division)
+    // Available Sections (Standard and Division)
     public List<java.util.Map<String, Object>> getAvailableSections() {
         String sql = "SELECT Standard, Division, Room_No FROM Section ORDER BY Standard, Division";
         return jdbcTemplate.queryForList(sql);
     }
 
-    // Helper: Available Houses
+    // Available Houses
     public List<java.util.Map<String, Object>> getAvailableHouses() {
         String sql = "SELECT Color, House_Name FROM House ORDER BY House_Name";
         return jdbcTemplate.queryForList(sql);
     }
 
-    // Helper: Available Vehicles
+    // Available Vehicles
     public List<java.util.Map<String, Object>> getAvailableVehicles() {
         String sql = "SELECT Vehicle_ID, Route_Name, Registration_Number FROM Transport ORDER BY Vehicle_ID";
         return jdbcTemplate.queryForList(sql);
     }
 
-    // Helper: Save Guardian
+    //  Save Guardian
     public void saveGuardian(String studentId, String relationship, String firstName, String middleName, String lastName, String occupation, String phone) {
         String sql = "INSERT INTO Student_Guardian (Student_ID, Relationship, First_Name, Middle_Name, Last_Name, Occupation, Phone_No) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE First_Name = VALUES(First_Name), " +

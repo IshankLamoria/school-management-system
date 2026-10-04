@@ -1,6 +1,3 @@
-// FIX: Package declaration was 'com.example.SchoolWebsite' (the root package) but this file
-// physically lives under the 'controller/' sub-folder. Same pattern as TempRunner.java.
-// Corrected to match the actual folder path: com.example.SchoolWebsite.controller
 package com.example.SchoolWebsite.controller;
 
 import java.util.List;
@@ -10,10 +7,6 @@ import com.example.SchoolWebsite.service.StaffService;
 import com.example.SchoolWebsite.service.StudentService;
 import com.example.SchoolWebsite.repository.StatsRepository;
 
-// FIX: StaffService and Staff were not imported — they were referenced via verbose inline
-// fully-qualified names (e.g. com.example.SchoolWebsite.service.StaffService) throughout
-// the file. This is not wrong, but it clutters the code and triggers IDE style warnings.
-// Added proper imports and replaced all inline FQNs with the short class names.
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

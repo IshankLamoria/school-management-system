@@ -22,7 +22,7 @@ public class UserRepository {
 
         String trimmed = username.trim();
 
-        // 1. Direct username check
+        //  Direct username check
         String sql = "SELECT Username, Password, Role FROM User_Account WHERE Username = ?";
         List<UserAccount> list = jdbcTemplate.query(sql, (rs, rowNum) -> new UserAccount(
             rs.getString("Username"),
@@ -34,7 +34,7 @@ public class UserRepository {
             return list.get(0);
         }
 
-        // 2. Case-insensitive username check
+        //  Case-insensitive username check
         List<UserAccount> listCase = jdbcTemplate.query(
             "SELECT Username, Password, Role FROM User_Account WHERE UPPER(Username) = UPPER(?)",
             (rs, rowNum) -> new UserAccount(
@@ -48,7 +48,7 @@ public class UserRepository {
             return listCase.get(0);
         }
 
-        // 3. Fallback: Check if teacher logged in via Email
+        //  Fallback: Check if teacher logged in via Email
         List<String> teacherIds = jdbcTemplate.query(
             "SELECT Employee_ID FROM Teacher WHERE UPPER(Email) = UPPER(?)",
             (rs, rowNum) -> rs.getString("Employee_ID"),

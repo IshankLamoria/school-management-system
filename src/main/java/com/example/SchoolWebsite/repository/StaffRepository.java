@@ -18,7 +18,7 @@ public class StaffRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Method 1: Get staff profile by Employee ID
+    // Get staff profile by Employee ID
     public Staff findById(String employeeId) {
         String sql = "SELECT Employee_ID, First_Name, Middle_Name, Last_Name, " +
                      "Contact_Number, Designated_Role, Date_Of_Joining, Salary " +
@@ -40,7 +40,7 @@ public class StaffRepository {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    // Method 2: Get salary payment transactions for staff
+    // Get salary payment transactions for staff
     public List<Payment> getSalaryHistory(String employeeId) {
         String sql = "SELECT p.Transaction_ID, p.Date_Of_Payment, p.Payment_Type, " +
                      "p.Receiver, p.Sender, p.Payment_Mode, p.Amount " +
@@ -62,7 +62,7 @@ public class StaffRepository {
         }, employeeId);
     }
 
-    // Method 3: Get assigned vehicle for driver
+    // Get assigned vehicle for driver
     public VehicleInfo getAssignedVehicle(String driverId) {
         String sql = "SELECT Vehicle_ID, Route_Name, Registration_Number, Capacity, DriverID " +
                      "FROM Transport WHERE DriverID = ?";
@@ -80,7 +80,7 @@ public class StaffRepository {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    // Method 4: Get students assigned to a specific vehicle (NO fees, only transit/safety info)
+    // Get students assigned to a specific vehicle (NO fees, only transit/safety info)
     public List<Student> getBusStudents(String vehicleId) {
         String sql = "SELECT Admission_No AS admissionNo, Roll_No AS rollNo, First_Name AS firstName, " +
                      "Last_Name AS lastName, Standard AS standard, Division AS division, " +
@@ -103,7 +103,7 @@ public class StaffRepository {
         }, vehicleId);
     }
 
-    // Method 5: Find all staff members for Admin
+    // Find all staff members for Admin
     public List<Staff> findAll() {
         String sql = "SELECT Employee_ID, First_Name, Middle_Name, Last_Name, " +
                      "Contact_Number, Designated_Role, Date_Of_Joining, Salary " +
@@ -123,7 +123,7 @@ public class StaffRepository {
         });
     }
 
-    // Method 6: Save staff
+    // Save staff
     public void save(Staff s) {
         String sql = "INSERT INTO Staff (Employee_ID, First_Name, Middle_Name, Last_Name, " +
                      "Contact_Number, Designated_Role, Date_Of_Joining, Salary) " +
@@ -141,7 +141,7 @@ public class StaffRepository {
         );
     }
 
-    // Method 7: Update staff
+    // Update staff
     public void update(Staff s) {
         String sql = "UPDATE Staff SET First_Name = ?, Middle_Name = ?, Last_Name = ?, " +
                      "Contact_Number = ?, Designated_Role = ?, Date_Of_Joining = ?, Salary = ? " +
@@ -159,12 +159,12 @@ public class StaffRepository {
         );
     }
 
-    // Method 8: Delete staff
+    // Delete staff
     public void delete(String employeeId) {
         jdbcTemplate.update("DELETE FROM Staff WHERE Employee_ID = ?", employeeId);
     }
 
-    // Method 9: Get distinct designated roles
+    // Get distinct designated roles
     public List<String> findDistinctRoles() {
         String sql = "SELECT DISTINCT Designated_Role FROM Staff " +
                      "WHERE Designated_Role IS NOT NULL AND TRIM(Designated_Role) <> '' " +

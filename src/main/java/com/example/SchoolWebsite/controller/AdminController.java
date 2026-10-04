@@ -57,7 +57,7 @@ public class AdminController {
     }
 
     // ==========================================
-    // 1. MANAGE STUDENTS
+    // MANAGE STUDENTS
     // ==========================================
 
     @GetMapping("/students")
@@ -68,6 +68,7 @@ public class AdminController {
             HttpSession session,
             Model model) {
 
+        // checks for admin 
         if (!isAdmin(session)) {
             return "redirect:/login";
         }
@@ -216,7 +217,7 @@ public class AdminController {
     }
 
     // ==========================================
-    // 2. MANAGE FACULTY (TEACHERS & STAFF)
+    // MANAGE FACULTY (TEACHERS & STAFF)
     // ==========================================
 
     @GetMapping("/faculty")
@@ -461,7 +462,7 @@ public class AdminController {
     }
 
     // ==========================================
-    // 3. TRANSACTIONS
+    // TRANSACTIONS
     // ==========================================
 
     @GetMapping("/transactions")
@@ -510,7 +511,7 @@ public class AdminController {
     }
 
     // ==========================================
-    // 4. TRANSPORT
+    // TRANSPORT
     // ==========================================
 
     @GetMapping("/transport")

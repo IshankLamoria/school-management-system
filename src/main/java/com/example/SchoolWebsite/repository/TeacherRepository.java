@@ -16,7 +16,7 @@ public class TeacherRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Method 1: Find full teacher profile including qualifications, specializations, and mentorship
+    // Find full teacher profile including qualifications, specializations, and mentorship
     public Teacher findFullProfile(String employeeId) {
         String sql = "SELECT t.Employee_ID, t.First_Name, t.Middle_Name, t.Last_Name, " +
                      "t.Date_Of_Joining, t.Phone_No, t.Email, t.Salary, t.MentorOf, " +
@@ -60,7 +60,7 @@ public class TeacherRepository {
         return teacher;
     }
 
-    // Method 2: Get schedule entries for teacher
+    // Get schedule entries for teacher
     public List<ScheduleItem> getSchedule(String employeeId) {
         String sql = "SELECT cs.Teacher_ID, cs.Subject_ID, s.Subject_Name, cs.Standard, cs.Division, sec.Room_No, " +
                      "(SELECT COUNT(*) FROM Enrollments e " +
@@ -85,7 +85,7 @@ public class TeacherRepository {
         }, employeeId);
     }
 
-    // Method 3: Get distinct class and section pairs associated with teacher (either taught or mentored)
+    // Get distinct class and section pairs associated with teacher (either taught or mentored)
     public List<String> getTeacherSections(String employeeId) {
         String sql = "SELECT DISTINCT CONCAT(Standard, '-', Division) AS sectionPair FROM (" +
                      " SELECT Standard, Division FROM Class_Schedule WHERE Teacher_ID = ? " +
@@ -96,7 +96,7 @@ public class TeacherRepository {
         return jdbcTemplate.queryForList(sql, String.class, employeeId, employeeId);
     }
 
-    // Method 4: Get students enrolled in a specific course/subject for a specific class & section
+    // Get students enrolled in a specific course/subject for a specific class & section
     public List<com.example.SchoolWebsite.model.Student> getEnrolledStudentsForCourse(String subjectCode, String standard, String division) {
         String sql = "SELECT s.Admission_No AS admissionNo, s.Roll_No AS rollNo, s.First_Name AS firstName, " +
                      "s.Last_Name AS lastName, s.Standard AS standard, s.Division AS division, " +
@@ -120,14 +120,14 @@ public class TeacherRepository {
         }, subjectCode, standard, division);
     }
 
-    // Method 5: Get subject name by code
+    // Get subject name by code
     public String getSubjectName(String subjectCode) {
         String sql = "SELECT Subject_Name FROM Subject WHERE Subject_Code = ?";
         List<String> list = jdbcTemplate.queryForList(sql, String.class, subjectCode);
         return list.isEmpty() ? subjectCode : list.get(0);
     }
 
-    // Method 6: Get salary payment transactions for teacher
+    // Get salary payment transactions for teacher
     public List<com.example.SchoolWebsite.model.Payment> getSalaryHistory(String employeeId) {
         String sql = "SELECT p.Transaction_ID, p.Date_Of_Payment, p.Payment_Type, " +
                      "p.Receiver, p.Sender, p.Payment_Mode, p.Amount " +
@@ -149,7 +149,7 @@ public class TeacherRepository {
         }, employeeId);
     }
 
-    // Method 7: Get all teachers for Admin faculty list
+    // Get all teachers for Admin faculty list
     public List<Teacher> findAll() {
         String sql = "SELECT t.Employee_ID, t.First_Name, t.Middle_Name, t.Last_Name, " +
                      "t.Date_Of_Joining, t.Phone_No, t.Email, t.Salary, t.MentorOf, " +
@@ -188,7 +188,7 @@ public class TeacherRepository {
         return teachers;
     }
 
-    // Method 8: Save new Teacher
+    // Save new Teacher
     public void save(Teacher t, List<String> qualifications, List<String> specializations) {
         String sql = "INSERT INTO Teacher (Employee_ID, First_Name, Middle_Name, Last_Name, " +
                      "Date_Of_Joining, Phone_No, Email, Salary, MentorOf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -222,7 +222,7 @@ public class TeacherRepository {
         }
     }
 
-    // Method 9: Update Teacher
+    // Update Teacher
     public void update(Teacher t, List<String> qualifications, List<String> specializations) {
         String sql = "UPDATE Teacher SET First_Name = ?, Middle_Name = ?, Last_Name = ?, " +
                      "Date_Of_Joining = ?, Phone_No = ?, Email = ?, Salary = ?, MentorOf = ? " +
@@ -261,7 +261,7 @@ public class TeacherRepository {
         }
     }
 
-    // Method 10: Delete Teacher
+    // Delete Teacher
     public void delete(String employeeId) {
         jdbcTemplate.update("DELETE FROM Teacher WHERE Employee_ID = ?", employeeId);
     }
