@@ -287,3 +287,14 @@ CREATE TABLE Teacher_Salary (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
+-- ---------------------------------------------------------
+-- User Account (Authentication / Credentials)
+-- ---------------------------------------------------------
+
+CREATE TABLE User_Account (
+    Username            VARCHAR(50)       PRIMARY KEY,
+    Password            VARCHAR(100)      NOT NULL,
+    Role                VARCHAR(20)       NOT NULL
+);
+

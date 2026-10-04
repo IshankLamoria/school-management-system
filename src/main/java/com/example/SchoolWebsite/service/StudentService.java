@@ -10,9 +10,11 @@ import java.util.List;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final com.example.SchoolWebsite.repository.UserRepository userRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, com.example.SchoolWebsite.repository.UserRepository userRepository) {
         this.studentRepository = studentRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Student> findAll() {
@@ -38,6 +40,7 @@ public class StudentService {
 
     public void saveStudent(Student s, String guardianRel, String gFirst, String gMiddle, String gLast, String gOcc, String gPhone) {
         studentRepository.save(s);
+        userRepository.createOrUpdate(s.getAdmissionNo(), "pass_" + s.getAdmissionNo(), "student");
         if (guardianRel != null && !guardianRel.trim().isEmpty() && gFirst != null && !gFirst.trim().isEmpty()) {
             studentRepository.saveGuardian(s.getAdmissionNo(), guardianRel.trim(), gFirst.trim(), gMiddle, gLast, gOcc != null ? gOcc.trim() : "", gPhone != null ? gPhone.trim() : "");
         }
@@ -51,6 +54,7 @@ public class StudentService {
     }
 
     public void deleteStudent(String admissionNo) {
+        userRepository.delete(admissionNo);
         studentRepository.delete(admissionNo);
     }
 

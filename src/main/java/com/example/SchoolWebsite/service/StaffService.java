@@ -27,9 +27,11 @@ public class StaffService {
     );
 
     private final StaffRepository staffRepository;
+    private final com.example.SchoolWebsite.repository.UserRepository userRepository;
 
-    public StaffService(StaffRepository staffRepository) {
+    public StaffService(StaffRepository staffRepository, com.example.SchoolWebsite.repository.UserRepository userRepository) {
         this.staffRepository = staffRepository;
+        this.userRepository = userRepository;
     }
 
     public Staff getStaffProfile(String employeeId) {
@@ -67,6 +69,7 @@ public class StaffService {
 
     public void saveStaff(Staff s) {
         staffRepository.save(s);
+        userRepository.createOrUpdate(s.getEmployeeId(), "pass_" + s.getEmployeeId(), "staff");
     }
 
     public void updateStaff(Staff s) {
@@ -74,6 +77,7 @@ public class StaffService {
     }
 
     public void deleteStaff(String employeeId) {
+        userRepository.delete(employeeId);
         staffRepository.delete(employeeId);
     }
 }

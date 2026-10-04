@@ -15,35 +15,27 @@
 
     <div th:if="${error}" class="error" th:text="${error}">Error</div>
 
-    <form method="post" action="/login">
-        <label>Your ID:<br>
-            <input type="text" id="userId" name="userId" th:value="${userId}" placeholder="e.g. A001, T001, S001, admin" required style="width:250px;">
+    <form method="post" action="/login" style="max-width: 320px;">
+        <label>User ID or Username:<br>
+            <input type="text" id="userId" name="userId" th:value="${userId}" placeholder="e.g. A001, T001, S001, admin" required style="width: 100%;">
         </label><br><br>
 
-        <div id="passwordGroup" th:style="${showPassword} ? 'display: block;' : 'display: none;'">
-            <label>Password (admin only):<br>
-                <input type="password" id="password" name="password" placeholder="admin123" style="width:250px;">
-            </label><br><br>
-        </div>
+        <label>Password:<br>
+            <input type="password" id="password" name="password" placeholder="Enter password" required style="width: 100%;">
+        </label><br><br>
 
-        <button type="submit">Login</button>
+        <button type="submit" class="btn" style="background: #2563eb; color: white; border: none; border-radius: 4px; padding: 8px 16px;">Login</button>
     </form>
 
-    <script>
-        const userIdInput = document.getElementById('userId');
-        const pwdGroup = document.getElementById('passwordGroup');
-        function checkAdmin() {
-            if (userIdInput.value.trim().toLowerCase() === 'admin') {
-                pwdGroup.style.display = 'block';
-            } else if (!document.querySelector('.error')) {
-                pwdGroup.style.display = 'none';
-            }
-        }
-        userIdInput.addEventListener('input', checkAdmin);
-        checkAdmin();
-    </script>
-
     <br>
-    <p><small>Test credentials — Student: A001 | Teacher: T001 | Staff: S001 | Admin: admin / admin123</small></p>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; max-width: 450px; font-size: 13px; color: #475569;">
+        <strong>Default Test Credentials:</strong>
+        <ul style="margin: 6px 0 0 18px; padding: 0;">
+            <li><strong>Admin:</strong> <code>admin</code> / <code>admin123</code></li>
+            <li><strong>Student:</strong> <code>A001</code> / <code>pass_A001</code></li>
+            <li><strong>Teacher:</strong> <code>T001</code> / <code>pass_T001</code> (or email)</li>
+            <li><strong>Staff:</strong> <code>S001</code> / <code>pass_S001</code></li>
+        </ul>
+    </div>
 </body>
 </html>

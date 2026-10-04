@@ -11,9 +11,11 @@ import java.util.List;
 public class TeacherService {
 
     private final TeacherRepository teacherRepository;
+    private final com.example.SchoolWebsite.repository.UserRepository userRepository;
 
-    public TeacherService(TeacherRepository teacherRepository) {
+    public TeacherService(TeacherRepository teacherRepository, com.example.SchoolWebsite.repository.UserRepository userRepository) {
         this.teacherRepository = teacherRepository;
+        this.userRepository = userRepository;
     }
 
     public Teacher getFullProfile(String employeeId) {
@@ -46,6 +48,7 @@ public class TeacherService {
 
     public void saveTeacher(Teacher t, List<String> qualifications, List<String> specializations) {
         teacherRepository.save(t, qualifications, specializations);
+        userRepository.createOrUpdate(t.getEmployeeId(), "pass_" + t.getEmployeeId(), "teacher");
     }
 
     public void updateTeacher(Teacher t, List<String> qualifications, List<String> specializations) {
@@ -53,6 +56,7 @@ public class TeacherService {
     }
 
     public void deleteTeacher(String employeeId) {
+        userRepository.delete(employeeId);
         teacherRepository.delete(employeeId);
     }
 }

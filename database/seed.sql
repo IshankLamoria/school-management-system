@@ -7793,3 +7793,18 @@ INSERT INTO Staff_Salary (Payment_ID, Staff_ID) VALUES
 ('TXN1372', 'S025'),
 ('TXN1373', 'S025'),
 ('TXN1374', 'S025');
+
+-- ---------------------------------------------------------
+-- User Account Seed Data
+-- ---------------------------------------------------------
+
+INSERT IGNORE INTO User_Account (Username, Password, Role) VALUES ('admin', 'admin123', 'admin');
+
+INSERT IGNORE INTO User_Account (Username, Password, Role)
+SELECT Admission_No, CONCAT('pass_', Admission_No), 'student' FROM Student;
+
+INSERT IGNORE INTO User_Account (Username, Password, Role)
+SELECT Employee_ID, CONCAT('pass_', Employee_ID), 'teacher' FROM Teacher;
+
+INSERT IGNORE INTO User_Account (Username, Password, Role)
+SELECT Employee_ID, CONCAT('pass_', Employee_ID), 'staff' FROM Staff;
