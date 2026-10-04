@@ -44,23 +44,7 @@
 
     <!-- User status banner when logged in -->
     <div th:if="${isLoggedIn}" style="background: #eef2ff; border: 1px solid #c7d2fe; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
-        Logged in as: <strong th:text="${loggedInUser}"></strong> (<span th:text="${loggedInRole}"></span>) &nbsp;|&nbsp;
-        <a th:if="${loggedInRole == 'student'}" href="/student/profile">Go to My Profile →</a>
-        <span th:if="${loggedInRole == 'teacher'}">
-            <a href="/teacher/profile">My Profile →</a> &nbsp;|&nbsp;
-            <a href="/teacher/schedule">My Schedule →</a> &nbsp;|&nbsp;
-            <a href="/teacher/salary">My Salary →</a> &nbsp;|&nbsp;
-            <a href="/teacher/students">Student Directory →</a>
-        </span>
-        <span th:if="${loggedInRole == 'staff'}">
-            <a href="/staff/profile">My Profile →</a> &nbsp;|&nbsp;
-            <a href="/staff/salary">My Salary →</a>
-            <span th:if="${isDriver}">&nbsp;|&nbsp; <a href="/staff/transport">My Bus Students →</a></span>
-        </span>
-        <span th:if="${loggedInRole == 'admin'}">
-            <a href="/admin/students">Manage Students →</a> &nbsp;|&nbsp;
-            <a href="/admin/faculty">Manage Faculty &amp; Staff →</a>
-        </span>
+        Logged in as: <strong th:text="${loggedInUser}"></strong> (<span th:text="${loggedInRole}"></span>)
     </div>
 
     <h2>Quick Stats</h2>
@@ -72,29 +56,8 @@
         <tr><td>Houses</td><td th:text="${houseCount}">0</td></tr>
     </table>
 
-    <br>
-    <div th:if="${!isLoggedIn}">
+    <div th:unless="${isLoggedIn}" style="margin-top: 15px;">
         <a href="/login">→ Go to Login</a>
-    </div>
-    <div th:if="${isLoggedIn}">
-        <div th:if="${loggedInRole == 'student'}">
-            <a href="/student/profile">→ View My Student Profile</a>
-        </div>
-        <div th:if="${loggedInRole == 'teacher'}">
-            <p style="margin: 4px 0;"><a href="/teacher/profile">→ View My Teacher Profile</a></p>
-            <p style="margin: 4px 0;"><a href="/teacher/schedule">→ View My Teaching Schedule</a></p>
-            <p style="margin: 4px 0;"><a href="/teacher/salary">→ View My Salary Transactions</a></p>
-            <p style="margin: 4px 0;"><a href="/teacher/students">→ View Student Directory</a></p>
-        </div>
-        <div th:if="${loggedInRole == 'staff'}">
-            <p style="margin: 4px 0;"><a href="/staff/profile">→ View My Staff Profile</a></p>
-            <p style="margin: 4px 0;"><a href="/staff/salary">→ View My Salary Transactions</a></p>
-            <p th:if="${isDriver}" style="margin: 4px 0;"><a href="/staff/transport">→ View Assigned Bus &amp; Students</a></p>
-        </div>
-        <div th:if="${loggedInRole == 'admin'}">
-            <p style="margin: 4px 0;"><a href="/admin/students">→ Manage Student Records</a></p>
-            <p style="margin: 4px 0;"><a href="/admin/faculty">→ Manage Faculty &amp; Staff Records</a></p>
-        </div>
     </div>
 </body>
 </html>
