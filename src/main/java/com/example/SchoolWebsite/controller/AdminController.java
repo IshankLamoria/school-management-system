@@ -64,6 +64,8 @@ public class AdminController {
         model.addAttribute("standard", standard != null ? standard : "");
         model.addAttribute("division", division != null ? division : "");
         model.addAttribute("search", search != null ? search : "");
+        model.addAttribute("availableClasses", studentService.getAvailableClasses());
+        model.addAttribute("availableDivisions", studentService.getAvailableDivisions());
         model.addAttribute("availableSections", studentService.getAvailableSections());
         model.addAttribute("isLoggedIn", true);
         model.addAttribute("loggedInUser", session.getAttribute("userId"));
@@ -85,6 +87,8 @@ public class AdminController {
 
         model.addAttribute("student", student);
         model.addAttribute("mode", "create");
+        model.addAttribute("availableClasses", studentService.getAvailableClasses());
+        model.addAttribute("availableDivisions", studentService.getAvailableDivisions());
         model.addAttribute("availableSections", studentService.getAvailableSections());
         model.addAttribute("availableHouses", studentService.getAvailableHouses());
         model.addAttribute("availableVehicles", studentService.getAvailableVehicles());
@@ -140,6 +144,8 @@ public class AdminController {
         List<Guardian> guardians = guardianService.findByStudentId(admissionNo);
         model.addAttribute("guardian", guardians.isEmpty() ? null : guardians.get(0));
 
+        model.addAttribute("availableClasses", studentService.getAvailableClasses());
+        model.addAttribute("availableDivisions", studentService.getAvailableDivisions());
         model.addAttribute("availableSections", studentService.getAvailableSections());
         model.addAttribute("availableHouses", studentService.getAvailableHouses());
         model.addAttribute("availableVehicles", studentService.getAvailableVehicles());

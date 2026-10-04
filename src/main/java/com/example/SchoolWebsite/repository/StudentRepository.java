@@ -262,6 +262,18 @@ public class StudentRepository {
         jdbcTemplate.update(sql, admissionNo);
     }
 
+    // Helper: Available Classes (Standards)
+    public List<String> getAvailableClasses() {
+        String sql = "SELECT Standard FROM Class ORDER BY CAST(Standard AS UNSIGNED)";
+        return jdbcTemplate.queryForList(sql, String.class);
+    }
+
+    // Helper: Available Divisions
+    public List<String> getAvailableDivisions() {
+        String sql = "SELECT DISTINCT Division FROM Section ORDER BY Division";
+        return jdbcTemplate.queryForList(sql, String.class);
+    }
+
     // Helper: Available Sections (Standard and Division)
     public List<java.util.Map<String, Object>> getAvailableSections() {
         String sql = "SELECT Standard, Division, Room_No FROM Section ORDER BY Standard, Division";

@@ -54,6 +54,14 @@ public class StudentService {
         studentRepository.delete(admissionNo);
     }
 
+    public List<String> getAvailableClasses() {
+        return studentRepository.getAvailableClasses();
+    }
+
+    public List<String> getAvailableDivisions() {
+        return studentRepository.getAvailableDivisions();
+    }
+
     public List<java.util.Map<String, Object>> getAvailableSections() {
         return studentRepository.getAvailableSections();
     }

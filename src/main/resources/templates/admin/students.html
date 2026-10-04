@@ -27,10 +27,10 @@
                 <strong>Class:</strong>
                 <select name="standard">
                     <option value="">All Classes</option>
-                    <option th:each="s : ${availableSections}"
-                            th:value="${s.Standard}"
-                            th:text="'Class ' + ${s.Standard}"
-                            th:selected="${s.Standard == standard}"></option>
+                    <option th:each="cls : ${availableClasses}"
+                            th:value="${cls}"
+                            th:text="'Class ' + ${cls}"
+                            th:selected="${cls == standard}"></option>
                 </select>
             </label>
 
@@ -38,10 +38,10 @@
                 <strong>Section:</strong>
                 <select name="division">
                     <option value="">All Sections</option>
-                    <option th:each="s : ${availableSections}"
-                            th:value="${s.Division}"
-                            th:text="'Section ' + ${s.Division}"
-                            th:selected="${s.Division == division}"></option>
+                    <option th:each="d : ${availableDivisions}"
+                            th:value="${d}"
+                            th:text="'Section ' + ${d}"
+                            th:selected="${d == division}"></option>
                 </select>
             </label>
 
