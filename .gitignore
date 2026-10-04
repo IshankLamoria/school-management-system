@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### macOS ###
+# .DS_Store is a hidden file automatically created by macOS Finder on every folder you open.
+# It stores folder display settings (icon positions, view preferences, etc.) and is
+# 100% machine-specific. It should NEVER be committed — it pollutes the repo for Windows/Linux
+# collaborators and leaks local folder structure metadata.
+.DS_Store
+**/.DS_Store
