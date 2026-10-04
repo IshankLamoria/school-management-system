@@ -39,3 +39,9 @@ build/
 # collaborators and leaks local folder structure metadata.
 .DS_Store
 **/.DS_Store
+
+### Local environment & credentials ###
+src/main/resources/application.properties
+src/main/resources/application-local.properties
+application.properties
+
