@@ -8,6 +8,8 @@ public class Payment {
     private String sender;
     private String paymentMode;
     private double amount;
+    private String relatedId;
+    private String relatedRole;
 
     public Payment() {}
 
@@ -41,4 +43,10 @@ public class Payment {
 
     public double getAmount() { return amount; }
     public void setAmount(double amount) { this.amount = amount; }
+
+    public String getRelatedId() { return relatedId; }
+    public void setRelatedId(String relatedId) { this.relatedId = relatedId; }
+
+    public String getRelatedRole() { return relatedRole; }
+    public void setRelatedRole(String relatedRole) { this.relatedRole = relatedRole; }
 }

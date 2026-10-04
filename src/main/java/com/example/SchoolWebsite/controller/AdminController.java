@@ -1,13 +1,17 @@
 package com.example.SchoolWebsite.controller;
 
+import com.example.SchoolWebsite.model.Guardian;
+import com.example.SchoolWebsite.model.Payment;
 import com.example.SchoolWebsite.model.Staff;
 import com.example.SchoolWebsite.model.Student;
 import com.example.SchoolWebsite.model.Teacher;
-import com.example.SchoolWebsite.model.Guardian;
+import com.example.SchoolWebsite.model.VehicleInfo;
 import com.example.SchoolWebsite.service.GuardianService;
+import com.example.SchoolWebsite.service.PaymentService;
 import com.example.SchoolWebsite.service.StaffService;
 import com.example.SchoolWebsite.service.StudentService;
 import com.example.SchoolWebsite.service.TeacherService;
+import com.example.SchoolWebsite.service.TransportService;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -18,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,12 +33,21 @@ public class AdminController {
     private final TeacherService teacherService;
     private final StaffService staffService;
     private final GuardianService guardianService;
+    private final PaymentService paymentService;
+    private final TransportService transportService;
 
-    public AdminController(StudentService studentService, TeacherService teacherService, StaffService staffService, GuardianService guardianService) {
+    public AdminController(StudentService studentService,
+                           TeacherService teacherService,
+                           StaffService staffService,
+                           GuardianService guardianService,
+                           PaymentService paymentService,
+                           TransportService transportService) {
         this.studentService = studentService;
         this.teacherService = teacherService;
         this.staffService = staffService;
         this.guardianService = guardianService;
+        this.paymentService = paymentService;
+        this.transportService = transportService;
     }
 
     private boolean isAdmin(HttpSession session) {
@@ -444,5 +458,265 @@ public class AdminController {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
+    }
+
+    // ==========================================
+    // 3. TRANSACTIONS
+    // ==========================================
+
+    @GetMapping("/transactions")
+    public String listTransactions(
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String mode,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "1") int page,
+            HttpSession session,
+            Model model) {
+
+        if (!isAdmin(session)) {
+            return "redirect:/login";
+        }
+
+        int pageSize = 25;
+        int currentPage = Math.max(1, page);
+        int totalCount = paymentService.countFilteredTransactions(type, mode, startDate, endDate, search);
+        int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+        if (totalPages == 0) totalPages = 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        List<Payment> transactions = paymentService.getFilteredTransactions(type, mode, startDate, endDate, search, currentPage, pageSize);
+        Map<String, Object> stats = paymentService.getTransactionStats();
+
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("stats", stats);
+        model.addAttribute("selectedType", type != null ? type : "");
+        model.addAttribute("selectedMode", mode != null ? mode : "");
+        model.addAttribute("startDate", startDate != null ? startDate : "");
+        model.addAttribute("endDate", endDate != null ? endDate : "");
+        model.addAttribute("search", search != null ? search : "");
+        model.addAttribute("availableTypes", paymentService.getAvailablePaymentTypes());
+        model.addAttribute("availableModes", paymentService.getAvailablePaymentModes());
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalCount", totalCount);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("isLoggedIn", true);
+        model.addAttribute("loggedInUser", session.getAttribute("userId"));
+        model.addAttribute("loggedInRole", "admin");
+
+        return "admin/transactions";
+    }
+
+    // ==========================================
+    // 4. TRANSPORT
+    // ==========================================
+
+    @GetMapping("/transport")
+    public String listTransport(
+            @RequestParam(required = false) String selectedVehicle,
+            HttpSession session,
+            Model model) {
+
+        if (!isAdmin(session)) {
+            return "redirect:/login";
+        }
+
+        List<VehicleInfo> vehicles = transportService.getAllVehicles();
+        Map<String, Object> stats = transportService.getTransportStats();
+
+        VehicleInfo activeVehicle = null;
+        List<Student> passengers = Collections.emptyList();
+
+        if (selectedVehicle != null && !selectedVehicle.trim().isEmpty()) {
+            activeVehicle = transportService.getVehicleById(selectedVehicle);
+            if (activeVehicle != null) {
+                passengers = transportService.getStudentsByVehicleId(selectedVehicle);
+            }
+        } else if (!vehicles.isEmpty()) {
+            activeVehicle = vehicles.get(0);
+            passengers = transportService.getStudentsByVehicleId(activeVehicle.getVehicleId());
+        }
+
+        model.addAttribute("vehicles", vehicles);
+        model.addAttribute("stats", stats);
+        model.addAttribute("activeVehicle", activeVehicle);
+        model.addAttribute("passengers", passengers);
+        model.addAttribute("unassignedStudents", transportService.getUnassignedStudents());
+        model.addAttribute("isLoggedIn", true);
+        model.addAttribute("loggedInUser", session.getAttribute("userId"));
+        model.addAttribute("loggedInRole", "admin");
+
+        return "admin/transport";
+    }
+
+    @GetMapping("/transport/vehicle/new")
+    public String newVehicleForm(HttpSession session, Model model) {
+        if (!isAdmin(session)) {
+            return "redirect:/login";
+        }
+
+        VehicleInfo vehicle = new VehicleInfo();
+        vehicle.setCapacity(40);
+
+        model.addAttribute("vehicle", vehicle);
+        model.addAttribute("mode", "create");
+        model.addAttribute("drivers", transportService.getAllDrivers());
+        model.addAttribute("isLoggedIn", true);
+        model.addAttribute("loggedInUser", session.getAttribute("userId"));
+        model.addAttribute("loggedInRole", "admin");
+
+        return "admin/vehicle-form";
+    }
+
+    @PostMapping("/transport/vehicle/new")
+    public String createVehicle(
+            @ModelAttribute VehicleInfo vehicle,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        if (!isAdmin(session)) {
+            return "redirect:/login";
+        }
+
+        try {
+            transportService.saveVehicle(vehicle);
+            redirectAttributes.addFlashAttribute("successMessage", "Vehicle " + vehicle.getVehicleId() + " created successfully!");
+            return "redirect:/admin/transport?selectedVehicle=" + vehicle.getVehicleId();
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to create vehicle: " + e.getMessage());
+            return "redirect:/admin/transport";
+        }
+    }
+
+    @GetMapping("/transport/vehicle/edit/{vehicleId}")
+    public String editVehicleForm(@PathVariable String vehicleId, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        if (!isAdmin(session)) {
+            return "redirect:/login";
+        }
+
+        VehicleInfo vehicle = transportService.getVehicleById(vehicleId);
+        if (vehicle == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Vehicle not found: " + vehicleId);
+            return "redirect:/admin/transport";
+        }
+
+        model.addAttribute("vehicle", vehicle);
+        model.addAttribute("mode", "edit");
+        model.addAttribute("drivers", transportService.getAllDrivers());
+        model.addAttribute("isLoggedIn", true);
+        model.addAttribute("loggedInUser", session.getAttribute("userId"));
+        model.addAttribute("loggedInRole", "admin");
+
+        return "admin/vehicle-form";
+    }
+
+    @PostMapping("/transport/vehicle/edit/{vehicleId}")
+    public String updateVehicle(
+            @PathVariable String vehicleId,
+            @ModelAttribute VehicleInfo vehicle,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        if (!isAdmin(session)) {
+            return "redirect:/login";
+        }
+
+        vehicle.setVehicleId(vehicleId);
+        try {
+            transportService.updateVehicle(vehicle);
+            redirectAttributes.addFlashAttribute("successMessage", "Vehicle " + vehicleId + " updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update vehicle: " + e.getMessage());
+        }
+
+        return "redirect:/admin/transport?selectedVehicle=" + vehicleId;
+    }
+
+    @PostMapping("/transport/vehicle/delete/{vehicleId}")
+    public String deleteVehicle(@PathVariable String vehicleId, HttpSession session, RedirectAttributes redirectAttributes) {
+        if (!isAdmin(session)) {
+            return "redirect:/login";
+        }
+
+        try {
+            transportService.deleteVehicle(vehicleId);
+            redirectAttributes.addFlashAttribute("successMessage", "Vehicle " + vehicleId + " deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete vehicle: " + e.getMessage());
+        }
+
+        return "redirect:/admin/transport";
+    }
+
+    @PostMapping("/transport/remove-passenger")
+    public String removePassenger(
+            @RequestParam String admissionNo,
+            @RequestParam String vehicleId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        if (!isAdmin(session)) {
+            return "redirect:/login";
+        }
+
+        try {
+            transportService.removeStudentFromVehicle(admissionNo);
+            redirectAttributes.addFlashAttribute("successMessage", "Student " + admissionNo + " removed from vehicle " + vehicleId + ".");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to remove passenger: " + e.getMessage());
+        }
+
+        return "redirect:/admin/transport?selectedVehicle=" + vehicleId;
+    }
+
+    @PostMapping("/transport/add-passenger")
+    public String addPassenger(
+            @RequestParam(required = false) String admissionNo,
+            @RequestParam(required = false) String manualAdmissionNo,
+            @RequestParam String vehicleId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        if (!isAdmin(session)) {
+            return "redirect:/login";
+        }
+
+        String targetAdmissionNo = (manualAdmissionNo != null && !manualAdmissionNo.trim().isEmpty())
+                ? manualAdmissionNo.trim()
+                : (admissionNo != null ? admissionNo.trim() : "");
+
+        if (targetAdmissionNo.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please select or enter a student admission number.");
+            return "redirect:/admin/transport?selectedVehicle=" + vehicleId + "#passengers";
+        }
+
+        Student student = studentService.findByAdmissionNo(targetAdmissionNo);
+        if (student == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Student with admission number '" + targetAdmissionNo + "' not found.");
+            return "redirect:/admin/transport?selectedVehicle=" + vehicleId + "#passengers";
+        }
+
+        VehicleInfo vehicle = transportService.getVehicleById(vehicleId);
+        if (vehicle == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Vehicle '" + vehicleId + "' not found.");
+            return "redirect:/admin/transport";
+        }
+
+        if (vehicle.getAssignedStudents() >= vehicle.getCapacity()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Cannot add student: Vehicle " + vehicleId + " has reached maximum capacity (" + vehicle.getCapacity() + " seats).");
+            return "redirect:/admin/transport?selectedVehicle=" + vehicleId + "#passengers";
+        }
+
+        try {
+            transportService.assignStudentToVehicle(targetAdmissionNo, vehicleId);
+            String fullName = student.getFirstName() + (student.getLastName() != null ? " " + student.getLastName() : "");
+            redirectAttributes.addFlashAttribute("successMessage", "Student " + fullName + " (" + targetAdmissionNo + ") added to vehicle " + vehicleId + " successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to assign student to vehicle: " + e.getMessage());
+        }
+
+        return "redirect:/admin/transport?selectedVehicle=" + vehicleId + "#passengers";
     }
 }

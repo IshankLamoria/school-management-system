@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${mode == 'create'} ? 'Admin — Add Vehicle' : 'Admin — Edit Vehicle'">Admin — Vehicle Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/admin/students">Manage Students</a>
+        <a href="/admin/faculty">Manage Faculty &amp; Staff</a>
+        <a href="/admin/transactions">Transactions</a>
+        <a href="/admin/transport"><strong>Transport</strong></a>
+        <a href="/logout">Logout (<span th:text="${loggedInUser}">admin</span>)</a>
+    </nav>
+
+    <h1 th:text="${mode == 'create'} ? 'Add New School Vehicle' : 'Edit Vehicle: ' + ${vehicle.vehicleId}">Vehicle Form</h1>
+    <p>Configure school bus vehicle registration, designated route, capacity, and driver assignment.</p>
+
+    <form th:action="${mode == 'create' ? '/admin/transport/vehicle/new' : '/admin/transport/vehicle/edit/' + vehicle.vehicleId}" method="post" style="max-width: 550px;">
+        <table style="border: none;">
+            <tr>
+                <td style="border: none; width: 180px;"><label for="vehicleId"><strong>Vehicle ID:</strong></label></td>
+                <td style="border: none;">
+                    <input type="text" id="vehicleId" name="vehicleId" th:value="${vehicle.vehicleId}" 
+                           th:readonly="${mode == 'edit'}" required placeholder="e.g. V09" style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td style="border: none;"><label for="registrationNumber"><strong>Registration Number:</strong></label></td>
+                <td style="border: none;">
+                    <input type="text" id="registrationNumber" name="registrationNumber" th:value="${vehicle.registrationNumber}" 
+                           required placeholder="e.g. UP65XY1234" style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td style="border: none;"><label for="routeName"><strong>Route Name:</strong></label></td>
+                <td style="border: none;">
+                    <input type="text" id="routeName" name="routeName" th:value="${vehicle.routeName}" 
+                           required placeholder="e.g. Route I - Manduadih &amp; Lahartara" style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td style="border: none;"><label for="capacity"><strong>Seating Capacity:</strong></label></td>
+                <td style="border: none;">
+                    <input type="number" id="capacity" name="capacity" th:value="${vehicle.capacity}" 
+                           required min="1" max="100" style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td style="border: none;"><label for="driverId"><strong>Assigned Driver:</strong></label></td>
+                <td style="border: none;">
+                    <select id="driverId" name="driverId" style="width: 100%;">
+                        <option value="">-- No Driver Assigned --</option>
+                        <option th:each="d : ${drivers}"
+                                th:value="${d.employeeId}"
+                                th:text="${d.firstName} + ' ' + (${d.lastName != null} ? ${d.lastName} : '') + ' (' + ${d.employeeId} + ')'"
+                                th:selected="${d.employeeId == vehicle.driverId}"></option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn" style="background: #2563eb; color: white; border: none; border-radius: 4px;" 
+                    th:text="${mode == 'create'} ? 'Create Vehicle' : 'Save Changes'">Save Vehicle</button>
+            <a href="/admin/transport" style="margin-left: 15px; color: #555; text-decoration: none;">Cancel</a>
+        </div>
+    </form>
+</body>
+</html>

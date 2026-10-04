@@ -6,6 +6,9 @@ public class VehicleInfo {
     private String registrationNumber;
     private int capacity;
     private String driverId;
+    private String driverName;
+    private String driverContact;
+    private int assignedStudents;
 
     public VehicleInfo() {}
 
@@ -31,4 +34,17 @@ public class VehicleInfo {
 
     public String getDriverId() { return driverId; }
     public void setDriverId(String driverId) { this.driverId = driverId; }
+
+    public String getDriverName() { return driverName; }
+    public void setDriverName(String driverName) { this.driverName = driverName; }
+
+    public String getDriverContact() { return driverContact; }
+    public void setDriverContact(String driverContact) { this.driverContact = driverContact; }
+
+    public int getAssignedStudents() { return assignedStudents; }
+    public void setAssignedStudents(int assignedStudents) { this.assignedStudents = assignedStudents; }
+
+    public int getOccupancyPercentage() {
+        return capacity > 0 ? (int) Math.round(((double) assignedStudents / capacity) * 100) : 0;
+    }
 }

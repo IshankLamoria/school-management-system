@@ -34,6 +34,23 @@
 
     <!-- Payment history table -->
     <h2>Payment History</h2>
+
+    <!-- Date Range Filter Toolbar -->
+    <div style="background: #fafafa; border: 1px solid #ddd; padding: 10px; margin-bottom: 15px;">
+        <form method="get" action="/student/fees" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <label>
+                <strong>From Date:</strong>
+                <input type="date" name="startDate" th:value="${startDate}">
+            </label>
+            <label>
+                <strong>To Date:</strong>
+                <input type="date" name="endDate" th:value="${endDate}">
+            </label>
+            <button type="submit" class="btn" style="padding: 5px 12px;">Filter</button>
+            <a href="/student/fees" style="font-size: 13px; color: #666; text-decoration: none;">Reset</a>
+        </form>
+    </div>
+
     <table>
         <thead>
             <tr>

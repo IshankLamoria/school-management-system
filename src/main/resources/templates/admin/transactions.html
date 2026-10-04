@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin — Fee &amp; Salary Transactions</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/admin/students">Manage Students</a>
+        <a href="/admin/faculty">Manage Faculty &amp; Staff</a>
+        <a href="/admin/transactions"><strong>Transactions</strong></a>
+        <a href="/admin/transport">Transport</a>
+        <a href="/logout">Logout (<span th:text="${loggedInUser}">admin</span>)</a>
+    </nav>
+
+    <h1>Transaction Ledger &amp; Financial Audit</h1>
+    <p>Comprehensive transaction record of student fee collections and faculty/staff salary payouts.</p>
+
+    <!-- Financial KPI Summary Cards -->
+    <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 6px; min-width: 220px; flex: 1;">
+            <div style="font-size: 12px; color: #166534; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Total Fee Revenue</div>
+            <div style="font-size: 22px; font-weight: bold; color: #15803d; margin-top: 5px;" th:text="'₹' + ${stats.totalFee}">₹0.00</div>
+            <div style="font-size: 12px; color: #166534; margin-top: 3px;" th:text="${stats.feeCount} + ' fee payments logged'">0 fee payments logged</div>
+        </div>
+        <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 15px; border-radius: 6px; min-width: 220px; flex: 1;">
+            <div style="font-size: 12px; color: #991b1b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Total Salary Disbursements</div>
+            <div style="font-size: 22px; font-weight: bold; color: #b91c1c; margin-top: 5px;" th:text="'₹' + ${stats.totalSalary}">₹0.00</div>
+            <div style="font-size: 12px; color: #991b1b; margin-top: 3px;" th:text="${stats.salaryCount} + ' salary payouts logged'">0 salary payouts logged</div>
+        </div>
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 6px; min-width: 220px; flex: 1;">
+            <div style="font-size: 12px; color: #1e40af; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">All Recorded Transactions</div>
+            <div style="font-size: 22px; font-weight: bold; color: #1d4ed8; margin-top: 5px;" th:text="${stats.totalCount}">0</div>
+            <div style="font-size: 12px; color: #1e40af; margin-top: 3px;">Full institutional ledger count</div>
+        </div>
+    </div>
+
+    <!-- Filter & Search Toolbar -->
+    <div style="background: #fafafa; border: 1px solid #ddd; padding: 12px; margin-bottom: 20px;">
+        <form method="get" action="/admin/transactions" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <label>
+                <strong>Type:</strong>
+                <select name="type">
+                    <option value="">All Types</option>
+                    <option th:each="t : ${availableTypes}"
+                            th:value="${t}"
+                            th:text="${t}"
+                            th:selected="${t == selectedType}"></option>
+                </select>
+            </label>
+
+            <label>
+                <strong>Payment Mode:</strong>
+                <select name="mode">
+                    <option value="">All Modes</option>
+                    <option th:each="m : ${availableModes}"
+                            th:value="${m}"
+                            th:text="${m}"
+                            th:selected="${m == selectedMode}"></option>
+                </select>
+            </label>
+
+            <label>
+                <strong>From Date:</strong>
+                <input type="date" name="startDate" th:value="${startDate}">
+            </label>
+
+            <label>
+                <strong>To Date:</strong>
+                <input type="date" name="endDate" th:value="${endDate}">
+            </label>
+
+            <label>
+                <strong>Search:</strong>
+                <input type="text" name="search" th:value="${search}" placeholder="Txn ID, Sender, Receiver, ID..." style="width: 220px;">
+            </label>
+
+            <button type="submit" class="btn">Apply Filters</button>
+            <a href="/admin/transactions" style="font-size: 13px; color: #666; text-decoration: none;">Reset</a>
+        </form>
+    </div>
+
+    <!-- Results Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Date &amp; Time</th>
+                <th>Type</th>
+                <th>Related Entity</th>
+                <th>Sender</th>
+                <th>Receiver</th>
+                <th>Payment Mode</th>
+                <th style="text-align: right;">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="tx : ${transactions}">
+                <td><strong th:text="${tx.transactionId}">TXN0001</strong></td>
+                <td th:text="${tx.dateOfPayment}">2026-04-05 09:45:00</td>
+                <td>
+                    <span th:if="${tx.paymentType == 'Fee'}" 
+                          style="background: #dcfce7; color: #15803d; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Fee</span>
+                    <span th:if="${tx.paymentType == 'Salary'}" 
+                          style="background: #fee2e2; color: #b91c1c; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Salary</span>
+                    <span th:if="${tx.paymentType != 'Fee' and tx.paymentType != 'Salary'}" 
+                          style="background: #f3f4f6; color: #374151; padding: 3px 8px; border-radius: 4px; font-size: 12px;" th:text="${tx.paymentType}">Other</span>
+                </td>
+                <td>
+                    <span th:if="${tx.relatedId != null}">
+                        <strong th:text="${tx.relatedRole} + ': ' + ${tx.relatedId}">Student: A001</strong>
+                    </span>
+                    <span th:unless="${tx.relatedId != null}" style="color: #999;">—</span>
+                </td>
+                <td th:text="${tx.sender}">Rohan Mehta</td>
+                <td th:text="${tx.receiver}">School</td>
+                <td>
+                    <span style="background: #f1f5f9; color: #334155; padding: 2px 7px; border-radius: 3px; font-size: 12px;" th:text="${tx.paymentMode}">UPI</span>
+                </td>
+                <td style="text-align: right; font-weight: bold;" 
+                    th:styleappend="${tx.paymentType == 'Fee'} ? 'color: #15803d;' : 'color: #b91c1c;'"
+                    th:text="(${tx.paymentType == 'Fee' ? '+' : '-'}) + '₹' + ${tx.amount}">
+                    +₹20000.00
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(transactions)}">
+                <td colspan="8" style="text-align: center; color: #666; padding: 20px;">
+                    No transactions match the selected filters.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div style="color: #666; font-size: 13px;">
+            Showing page <strong th:text="${currentPage}">1</strong> of <strong th:text="${totalPages}">1</strong>
+            (<span th:text="${totalCount}">0</span> total matching records)
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <a th:if="${currentPage > 1}"
+               th:href="@{/admin/transactions(type=${selectedType}, mode=${selectedMode}, startDate=${startDate}, endDate=${endDate}, search=${search}, page=${currentPage - 1})}"
+               style="padding: 5px 12px; border: 1px solid #ccc; background: #fff; color: #2563eb; text-decoration: none; border-radius: 4px;">&laquo; Previous</a>
+            <span th:unless="${currentPage > 1}"
+                  style="padding: 5px 12px; border: 1px solid #eee; background: #f9f9f9; color: #aaa; border-radius: 4px;">&laquo; Previous</span>
+
+            <span style="font-weight: bold; padding: 0 4px;" th:text="'Page ' + ${currentPage}">Page 1</span>
+
+            <a th:if="${currentPage < totalPages}"
+               th:href="@{/admin/transactions(type=${selectedType}, mode=${selectedMode}, startDate=${startDate}, endDate=${endDate}, search=${search}, page=${currentPage + 1})}"
+               style="padding: 5px 12px; border: 1px solid #ccc; background: #fff; color: #2563eb; text-decoration: none; border-radius: 4px;">Next &raquo;</a>
+            <span th:unless="${currentPage < totalPages}"
+                  style="padding: 5px 12px; border: 1px solid #eee; background: #f9f9f9; color: #aaa; border-radius: 4px;">Next &raquo;</span>
+        </div>
+    </div>
+</body>
+</html>

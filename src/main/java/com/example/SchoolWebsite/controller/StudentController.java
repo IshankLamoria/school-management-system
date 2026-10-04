@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -83,7 +84,11 @@ public class StudentController {
     }
 
     @GetMapping("/fees")
-    public String showFees(HttpSession session, Model model) {
+    public String showFees(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            HttpSession session,
+            Model model) {
         String userId = (String) session.getAttribute("userId");
         String role = (String) session.getAttribute("role");
 
@@ -92,10 +97,12 @@ public class StudentController {
         }
 
         Student student = studentService.findByAdmissionNo(userId);
-        List<Payment> payments = paymentService.getStudentPayments(userId);
+        List<Payment> payments = paymentService.getStudentPayments(userId, startDate, endDate);
 
         model.addAttribute("student", student);
         model.addAttribute("payments", payments);
+        model.addAttribute("startDate", startDate != null ? startDate : "");
+        model.addAttribute("endDate", endDate != null ? endDate : "");
         model.addAttribute("isLoggedIn", true);
         model.addAttribute("loggedInUser", userId);
         model.addAttribute("loggedInRole", role);
